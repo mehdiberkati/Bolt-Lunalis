@@ -919,6 +919,19 @@ body {
   background: white;
 }
 
+.futuristic-toggle input[type="checkbox"]:disabled + .toggle-slider {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.futuristic-toggle input[type="checkbox"]:disabled + .toggle-slider::before {
+  background: var(--border-color);
+}
+
+.futuristic-toggle input[type="checkbox"]:disabled ~ .toggle-label {
+  opacity: 0.5;
+}
+
 .toggle-label {
   color: var(--text-secondary);
   font-size: 0.95rem;
