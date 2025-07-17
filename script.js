@@ -2,6 +2,7 @@ class MyRPGLifeApp {
   constructor() {
     this.data = this.loadData();
     this.timer = null;
+    this.weeklyCountdownInterval = null;
     this.timerState = {
       isRunning: false,
       isPaused: false,
@@ -16,6 +17,7 @@ class MyRPGLifeApp {
   init() {
     this.setupEventListeners();
     this.updateUI();
+    this.startWeeklyCountdown();
     this.startAutoSave();
   }
 
@@ -1140,15 +1142,37 @@ class MyRPGLifeApp {
   getTimeUntilNextReview() {
     const lastReview = this.data.weeklyReviews[this.data.weeklyReviews.length - 1];
     if (!lastReview) return "maintenant";
-    
+
     const nextReviewDate = new Date(lastReview.date);
     nextReviewDate.setDate(nextReviewDate.getDate() + 7);
-    
+
     const now = new Date();
     const diffTime = nextReviewDate - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return diffDays > 0 ? `${diffDays} jour(s)` : "maintenant";
+    if (diffTime <= 0) return "maintenant";
+
+    const totalSeconds = Math.floor(diffTime / 1000);
+    const days = Math.floor(totalSeconds / (24 * 3600));
+    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    return `${days}j ${hours}h ${minutes}m`;
+  }
+
+  updateWeeklyCountdown() {
+    const countdownEl = document.getElementById('weeklyCountdown');
+    if (countdownEl) {
+      countdownEl.textContent = this.getTimeUntilNextReview();
+    }
+  }
+
+  startWeeklyCountdown() {
+    if (this.weeklyCountdownInterval) {
+      clearInterval(this.weeklyCountdownInterval);
+    }
+    this.updateWeeklyCountdown();
+    this.weeklyCountdownInterval = setInterval(() => {
+      this.updateWeeklyCountdown();
+    }, 60000);
   }
 
   setupWeeklySliders() {
@@ -1191,6 +1215,7 @@ class MyRPGLifeApp {
     this.data.weeklyReviews.push(review);
     this.addXP(5, 'Bilan Hebdomadaire');
     this.showNotification('✨ Bilan hebdomadaire terminé ! +5 XP', 'success');
+    this.startWeeklyCountdown();
     this.renderWeeklyReview();
   }
 
