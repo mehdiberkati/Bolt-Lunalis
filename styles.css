@@ -16,6 +16,7 @@
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-cosmos: radial-gradient(circle at 50% 20%, #2d1b46 0%, #0a0a0f 100%);
 }
 
 /* Reset et base */
@@ -50,21 +51,27 @@ body {
   z-index: 100;
 }
 
+
 .logo {
   text-align: center;
   margin-bottom: 3rem;
   padding: 0 1.5rem;
+  position: relative;
 }
 
 .logo h1 {
   font-family: 'Orbitron', monospace;
   font-size: 1.5rem;
   font-weight: 900;
-  background: var(--gradient-primary);
+  background: var(--gradient-cosmos);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+  animation: twinkle 2s infinite ease-in-out;
 }
 
 .subtitle {
@@ -1656,6 +1663,44 @@ body {
 .weekly-container {
   max-width: 1000px;
   margin: 0 auto;
+  padding: 2rem;
+  background: var(--gradient-cosmos);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.weekly-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-image: radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
+    radial-gradient(1px 1px at 80% 70%, rgba(255, 255, 255, 0.6) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgba(255, 255, 255, 0.7) 50%, transparent 50%),
+    radial-gradient(1px 1px at 60% 20%, rgba(255, 255, 255, 0.5) 50%, transparent 50%);
+  background-size: 100px 100px;
+  background-repeat: repeat;
+  background-position: 0 0;
+  animation: starsMove 60s linear infinite;
+  pointer-events: none;
+}
+
+.mental-health-stats {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #fff;
+}
+
+.mental-health-stats .stat {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--success-color);
 }
 
 .weekly-container h2 {
@@ -1663,7 +1708,7 @@ body {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: var(--gradient-primary);
+  background: var(--gradient-accent);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1672,6 +1717,23 @@ body {
 .weekly-countdown-compact {
   text-align: center;
   margin-bottom: 2rem;
+}
+
+.weekly-benefits {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.benefits-title {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .countdown-timer-small {
@@ -2924,6 +2986,16 @@ select:focus {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes starsMove {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
 }
 
 /* Focus Mode */
