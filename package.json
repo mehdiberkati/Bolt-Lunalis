@@ -1,0 +1,21 @@
+{
+  "name": "lunalis-16-07-2025",
+  "version": "1.0.0",
+  "description": "Application immersive de gamification pour booster la productivité et la discipline. Transformez vos objectifs en aventure RPG avec un système XP avancé, des avatars évolutifs et une progression saisonnière.",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.31.0",
+    "globals": "^16.3.0",
+    "jest": "^30.0.4",
+    "prettier": "^3.6.2"
+  }
+}

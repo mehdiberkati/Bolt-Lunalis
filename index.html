@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyRPGLife 3 - Lunalis 🌙</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Navigation -->
+      <nav class="sidebar">
+        <div class="logo">
+          <h1>MyRPGLife 3</h1>
+          <span class="subtitle">Lunalis 🌙</span>
+        </div>
+
+        <div class="nav-menu">
+          <button
+            class="nav-btn active"
+            data-section="dashboard"
+            aria-label="Dashboard"
+          >
+            <span class="nav-icon">🏠</span>
+            Dashboard
+          </button>
+          <button class="nav-btn" data-section="focus" aria-label="Focus Timer">
+            <span class="nav-icon">🎯</span>
+            Focus Timer
+          </button>
+          <button class="nav-btn" data-section="projects" aria-label="Projets">
+            <span class="nav-icon">📋</span>
+            Projets
+          </button>
+          <button
+            class="nav-btn"
+            data-section="achievements"
+            aria-label="Succès"
+          >
+            <span class="nav-icon">🏆</span>
+            Succès
+          </button>
+          <button
+            class="nav-btn"
+            data-section="progression"
+            aria-label="Progression"
+          >
+            <span class="nav-icon">📈</span>
+            Progression
+          </button>
+          <button
+            class="nav-btn"
+            data-section="weekly"
+            aria-label="Bilan Hebdo"
+          >
+            <span class="nav-icon">📊</span>
+            Bilan Hebdo
+          </button>
+          <button
+            class="nav-btn"
+            data-section="settings"
+            aria-label="Paramètres"
+          >
+            <span class="nav-icon">⚙️</span>
+            Paramètres
+          </button>
+        </div>
+      </nav>
+
+      <!-- Contenu principal -->
+      <main class="main-content">
+        <!-- Dashboard -->
+        <section id="dashboard" class="content-section active">
+          <div class="dashboard-grid">
+            <!-- Rang et Avatar -->
+            <div class="rank-card">
+              <div class="avatar-container">
+                <div class="avatar" id="userAvatar">🎯</div>
+                <div class="rank-badge" id="rankBadge">E</div>
+              </div>
+              <div class="rank-info">
+                <h2 id="rankName">Paumé</h2>
+                <p id="rankTitle">Novice</p>
+              </div>
+            </div>
+
+            <!-- XP et Progression -->
+            <div class="xp-card">
+              <h3>Expérience</h3>
+              <div class="xp-display">
+                <span id="currentXP">0</span> /
+                <span id="nextRankXP">100</span> XP
+              </div>
+              <div class="xp-bar">
+                <div class="xp-fill" id="xpFill"></div>
+              </div>
+              <div class="daily-xp">
+                Aujourd'hui: <span id="dailyXP">0</span> XP
+              </div>
+            </div>
+
+            <!-- Saison et Temps -->
+            <div class="season-card">
+              <h3>Saison <span id="currentSeason">1</span></h3>
+              <p>Semaine <span id="currentWeek">1</span></p>
+              <div class="season-progress">
+                <div class="days-remaining">
+                  <span id="daysRemaining">42</span> jours restants
+                </div>
+              </div>
+            </div>
+
+            <!-- Taux d'Intensité -->
+            <div class="intensity-card">
+              <h3>Taux d'Intensité</h3>
+              <div class="intensity-display">
+                <div class="intensity-value" id="intensityValue">0%</div>
+                <div class="intensity-label" id="intensityLabel">
+                  Errant du Néant
+                </div>
+              </div>
+              <div class="intensity-bar">
+                <div class="intensity-fill" id="intensityFill"></div>
+              </div>
+            </div>
+
+            <!-- Défi Journalier -->
+            <div class="daily-challenge">
+              <h3>🎯 Défi Journalier</h3>
+              <div class="challenge-content">
+                <div class="challenge-goal">
+                  <span class="challenge-target">15 XP</span>
+                  <span class="challenge-label">Objectif quotidien</span>
+                </div>
+                <div class="challenge-progress">
+                  <div class="challenge-bar">
+                    <div class="challenge-fill" id="challengeFill"></div>
+                  </div>
+                  <span class="challenge-status" id="challengeStatus"
+                    >0/15 XP</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Coffre Double ou Rien -->
+            <div
+              class="double-or-nothing-chest"
+              id="doubleOrNothingChest"
+              style="display: none"
+            >
+              <div class="chest-container">
+                <div class="chest-glow"></div>
+                <div class="chest-icon">🎲</div>
+                <h3 class="chest-title">Coffre Mystique</h3>
+                <p class="chest-subtitle">Double ou Rien</p>
+
+                <div class="chest-content">
+                  <p class="chest-description">
+                    Tu as accompli ton quota 5 jours d'affilée !<br />
+                    Choisis ton destin...
+                  </p>
+
+                  <div class="chest-options">
+                    <button
+                      class="chest-btn safe safe-reward-btn"
+                      onclick="app.chooseSafeReward()"
+                    >
+                      <span class="btn-icon">✨</span>
+                      Récompense Sûre
+                      <span class="btn-reward">+5 XP</span>
+                    </button>
+
+                    <button
+                      class="chest-btn risky double-or-nothing-btn"
+                      onclick="app.chooseDoubleOrNothing()"
+                    >
+                      <span class="btn-icon">🔥</span>
+                      Double ou Rien
+                      <span class="btn-reward">+15 XP ou -5 XP</span>
+                    </button>
+                  </div>
+
+                  <div
+                    class="chest-challenge-details"
+                    id="challengeDetails"
+                    style="display: none"
+                  >
+                    <h4>🎯 Défi Éclair de Demain</h4>
+                    <ul>
+                      <li>3 blocs focus de 90 minutes</li>
+                      <li>Aucun malus (distractions)</li>
+                      <li>Récompense: +15 XP</li>
+                      <li>Échec: -5 XP</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions Quotidiennes -->
+            <div class="daily-actions">
+              <h3>Actions Quotidiennes</h3>
+              <div class="action-buttons">
+                <button
+                  class="action-btn"
+                  id="sportBtn"
+                  onclick="app.logSport()"
+                >
+                  <span class="action-icon">💪</span>
+                  Sport (50min)
+                  <span class="action-xp">+3 XP</span>
+                </button>
+                <button
+                  class="action-btn"
+                  id="sleepBtn"
+                  onclick="app.showSleepModal()"
+                >
+                  <span class="action-icon">😴</span>
+                  Sommeil
+                  <span class="action-xp">+1/2 XP</span>
+                </button>
+                <button
+                  class="action-btn distraction"
+                  onclick="app.showDistractionModal()"
+                >
+                  <span class="action-icon">📱</span>
+                  Distractions
+                  <span class="action-xp">-3/-5 XP</span>
+                </button>
+              </div>
+
+              <!-- Bouton Bilan Hebdomadaire -->
+              <button
+                class="weekly-review-btn"
+                id="weeklyReviewBtn"
+                onclick="app.goToWeeklyReview()"
+              >
+                📊 Effectuer le Bilan Hebdomadaire
+              </button>
+            </div>
+
+            <!-- Bouton Focus Principal -->
+            <div class="focus-cta">
+              <button class="focus-start-btn" id="focusStartBtn">
+                <span class="focus-icon">🎯</span>
+                Démarrer une session de focus
+                <span class="focus-subtitle">Gagne de l'XP en temps réel</span>
+              </button>
+            </div>
+
+            <!-- Objectif du Mois -->
+            <div class="monthly-goal">
+              <h3>Objectif du Mois</h3>
+              <div class="goal-content">
+                <p>Atteindre le rang <strong>Expert (A)</strong></p>
+                <div class="goal-progress">
+                  <span id="goalProgress">0</span> / 1000 XP
+                </div>
+              </div>
+            </div>
+
+            <!-- Streak -->
+            <div class="streak-card">
+              <h3>Streak</h3>
+              <div class="streak-display">
+                <span id="streakDays">0</span> jours
+              </div>
+              <p>Objectif: 15+ XP/jour</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Focus Timer -->
+        <section id="focus" class="content-section">
+          <div class="focus-container">
+            <h2 class="focus-title">🎯 Session de Focus</h2>
+
+            <div class="focus-layout">
+              <!-- Section principale du timer -->
+              <div class="timer-main">
+                <!-- Sélection de projet -->
+                <div class="project-selector">
+                  <label for="projectSelect">Projet associé:</label>
+                  <select id="projectSelect">
+                    <option value="">Sélectionner un projet</option>
+                  </select>
+                  <button class="create-project-btn" id="createProjectBtn">
+                    +
+                  </button>
+                </div>
+
+                <!-- Timer circulaire -->
+                <div class="timer-circle">
+                  <svg class="timer-svg" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="90" class="timer-bg"></circle>
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="90"
+                      class="timer-progress"
+                      id="timerProgress"
+                    ></circle>
+                  </svg>
+                  <div class="timer-display">
+                    <div class="timer-time" id="timerTime">25:00</div>
+                    <div class="timer-xp-preview" id="timerXPPreview">
+                      +2.8 XP
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contrôles de durée -->
+                <div class="duration-controls">
+                  <button
+                    class="duration-btn"
+                    id="decreaseDurationBtn"
+                    data-adjustment="-5"
+                  >
+                    -5min
+                  </button>
+                  <span class="duration-display" id="durationDisplay"
+                    >25 min</span
+                  >
+                  <button
+                    class="duration-btn"
+                    id="increaseDurationBtn"
+                    data-adjustment="5"
+                  >
+                    +5min
+                  </button>
+                </div>
+
+                <!-- Contrôles du timer -->
+                <div class="timer-controls">
+                  <button class="timer-btn primary" id="startPauseBtn">
+                    <span id="startPauseText">Commencer Focus</span>
+                  </button>
+                  <button class="timer-btn secondary" id="resetBtn">
+                    Annuler
+                  </button>
+                </div>
+
+                <!-- Options avec design amélioré -->
+                <div class="timer-options">
+                  <div class="option-item">
+                    <label class="futuristic-toggle">
+                      <input type="checkbox" id="autoBreaks" checked />
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label"
+                        >Pauses automatiques (5min/25min)</span
+                      >
+                    </label>
+                  </div>
+                  <div class="option-item">
+                    <label class="futuristic-toggle">
+                      <input type="checkbox" id="spotifyMode" />
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label"
+                        >Mode Spotify (simulation)</span
+                      >
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Statistiques Focus à droite -->
+              <div class="focus-stats-panel">
+                <h3 class="stats-title">📊 Statistiques Focus</h3>
+
+                <div class="stats-horizontal">
+                  <div class="stat-card purple">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                      <div class="stat-value" id="dailySessions">0</div>
+                      <div class="stat-label">Sessions Aujourd'hui</div>
+                    </div>
+                  </div>
+
+                  <div class="stat-card purple">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                      <div class="stat-value" id="dailyFocusTime">0min</div>
+                      <div class="stat-label">Focus Journalier</div>
+                    </div>
+                  </div>
+
+                  <div class="stat-card purple">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-content">
+                      <div class="stat-value" id="seasonFocusTime">0h</div>
+                      <div class="stat-label">Focus Saison</div>
+                    </div>
+                  </div>
+
+                  <div class="stat-card purple">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                      <div class="stat-value" id="mandatoryBlocks">0/2</div>
+                      <div class="stat-label">Blocs Obligatoires</div>
+                    </div>
+                  </div>
+
+                  <div class="stat-card purple">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-content">
+                      <div class="stat-value" id="dailyFocusXP">0</div>
+                      <div class="stat-label">XP Focus</div>
+                    </div>
+                  </div>
+
+                  <div class="stat-card purple">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-content">
+                      <div class="stat-value" id="focusStreak">0</div>
+                      <div class="stat-label">Streak Focus</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Statut des blocs amélioré -->
+                <div class="blocks-status-modern">
+                  <h4>Progression Quotidienne</h4>
+                  <div class="blocks-grid-modern">
+                    <div class="block-modern mandatory" id="block1">
+                      <div class="block-indicator"></div>
+                      <span class="block-label">Bloc 1</span>
+                      <span class="block-xp">+5 XP</span>
+                    </div>
+                    <div class="block-modern mandatory" id="block2">
+                      <div class="block-indicator"></div>
+                      <span class="block-label">Bloc 2</span>
+                      <span class="block-xp">+5 XP</span>
+                    </div>
+                    <div class="block-modern bonus locked" id="block3">
+                      <div class="block-indicator"></div>
+                      <span class="block-label">Bonus</span>
+                      <span class="block-xp">+10 XP</span>
+                    </div>
+                    <div class="daily-progress">
+                      <div class="progress-label">Progression Sessions</div>
+                      <div class="progress-bar-daily">
+                        <div
+                          class="progress-fill-daily"
+                          id="dailyProgressFill"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Projets -->
+        <section id="projects" class="content-section">
+          <div class="projects-container project-section">
+            <h2>🎯 Mes Projets</h2>
+
+            <div class="project-form" id="projectForm" style="display: none">
+              <div class="form-group">
+                <label for="projectName">Nom du projet</label>
+                <input
+                  type="text"
+                  id="projectName"
+                  placeholder="Ex: Apprendre le piano, Créer mon site web..."
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="projectDescription"
+                  >Description (optionnelle)</label
+                >
+                <textarea
+                  id="projectDescription"
+                  placeholder="Décrivez brièvement votre projet et vos objectifs..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="projectTimeGoal">Objectif de temps (heures)</label>
+                <input
+                  type="number"
+                  id="projectTimeGoal"
+                  placeholder="Ex: 50"
+                  min="1"
+                  max="1000"
+                />
+                <small class="form-help">Nombre d'heures de focus que vous souhaitez consacrer à ce projet</small>
+              </div>
+              <div class="project-actions">
+                <button
+                  class="btn-project secondary"
+                  onclick="app.cancelProject()"
+                >
+                  Annuler
+                </button>
+                <button class="btn-project primary" onclick="app.saveProject()">
+                  Créer le Projet
+                </button>
+              </div>
+            </div>
+
+            <div class="projects-header">
+              <button
+                class="btn-project primary"
+                onclick="app.showProjectForm()"
+              >
+                <span>+</span> Nouveau Projet
+              </button>
+            </div>
+
+            <div class="projects-list" id="projectsGrid">
+              <!-- Projets générés dynamiquement -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Succès -->
+        <section id="achievements" class="content-section">
+          <div class="achievements-container">
+            <h2>Accomplissements</h2>
+            <div class="achievements-content" id="achievementsContent">
+              <!-- Contenu généré dynamiquement -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Progression -->
+        <section id="progression" class="content-section">
+          <div class="progression-container">
+            <h2>Progression & Statistiques</h2>
+            <div class="progression-content" id="progressionContent">
+              <!-- Contenu généré dynamiquement -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Bilan Hebdomadaire -->
+        <section id="weekly" class="content-section">
+          <div class="weekly-container">
+            <h2>📊 Bilan Hebdomadaire</h2>
+
+            <div class="weekly-countdown-compact">
+              <div class="countdown-timer-small" id="weeklyCountdown">
+                6j 23h 45m
+              </div>
+            </div>
+
+            <div class="weekly-benefits">
+              <h3 class="benefits-title">
+                🌟 Les Bienfaits de Votre Bilan Hebdomadaire
+              </h3>
+
+              <ul class="benefits-list">
+                <li>
+                  <strong>Clarté mentale :</strong> Prenez du recul sur vos
+                  accomplissements et identifiez vos patterns de réussite
+                </li>
+                <li>
+                  <strong>Réduction du stress :</strong> Transformez l'anxiété
+                  en action concrète grâce à une vision claire de vos progrès
+                </li>
+                <li>
+                  <strong>Motivation durable :</strong> Célébrez vos victoires
+                  et ajustez votre trajectoire pour maintenir votre élan
+                </li>
+                <li>
+                  <strong>Équilibre vie-travail :</strong> Identifiez les
+                  domaines qui nécessitent plus d'attention pour un bien-être
+                  optimal
+                </li>
+              </ul>
+
+              <div class="mental-health-emphasis">
+                <p>
+                  💚 <strong>Impact sur votre santé mentale :</strong> Des
+                  études montrent que la réflexion hebdomadaire améliore
+                  l'estime de soi de 40% et réduit l'anxiété de 35%. Votre
+                  bien-être mental est votre plus grand atout pour une
+                  productivité épanouissante.
+                </p>
+              </div>
+            </div>
+
+            <div class="weekly-content" id="weeklyContent">
+              <!-- Contenu généré dynamiquement -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Paramètres -->
+        <section id="settings" class="content-section">
+          <div class="settings-container">
+            <h2>Paramètres</h2>
+            <div class="settings-content" id="settingsContent">
+              <!-- Contenu généré dynamiquement -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modales -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal" id="modal">
+        <!-- Contenu des modales généré dynamiquement -->
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notifications-container" id="notifications"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
