@@ -309,6 +309,8 @@ class MyRPGLifeApp {
   startTimer() {
     this.timerState.isRunning = true;
     this.timerState.isPaused = false;
+
+    this.enterFocusMode();
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -331,6 +333,8 @@ class MyRPGLifeApp {
   pauseTimer() {
     this.timerState.isRunning = false;
     this.timerState.isPaused = true;
+
+    this.exitFocusMode();
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -347,6 +351,8 @@ class MyRPGLifeApp {
     this.timerState.isRunning = false;
     this.timerState.isPaused = false;
     this.timerState.remaining = this.timerState.duration;
+
+    this.exitFocusMode();
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -362,6 +368,8 @@ class MyRPGLifeApp {
 
   completeTimer() {
     clearInterval(this.timer);
+
+    this.exitFocusMode();
     
     const minutes = this.timerState.duration / 60;
     const xpGained = this.calculateFocusXP(minutes);
@@ -412,6 +420,20 @@ class MyRPGLifeApp {
       const offset = circumference - (progress / 100) * circumference;
       timerProgress.style.strokeDasharray = circumference;
       timerProgress.style.strokeDashoffset = offset;
+    }
+  }
+
+  enterFocusMode() {
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.classList.add('focus-mode');
+    }
+  }
+
+  exitFocusMode() {
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.classList.remove('focus-mode');
     }
   }
 
