@@ -919,6 +919,19 @@ body {
   background: white;
 }
 
+.futuristic-toggle input[type="checkbox"]:disabled + .toggle-slider {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.futuristic-toggle input[type="checkbox"]:disabled + .toggle-slider::before {
+  background: var(--border-color);
+}
+
+.futuristic-toggle input[type="checkbox"]:disabled ~ .toggle-label {
+  opacity: 0.5;
+}
+
 .toggle-label {
   color: var(--text-secondary);
   font-size: 0.95rem;
@@ -2911,4 +2924,13 @@ select:focus {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Focus Mode */
+.app-container.focus-mode .sidebar,
+.app-container.focus-mode .main-content > .content-section:not(#focus) {
+  pointer-events: none;
+  filter: blur(3px);
+  opacity: 0.4;
+  transition: filter 0.3s, opacity 0.3s;
 }

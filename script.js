@@ -309,6 +309,9 @@ class MyRPGLifeApp {
   startTimer() {
     this.timerState.isRunning = true;
     this.timerState.isPaused = false;
+
+    this.enterFocusMode();
+    this.disableTimerOptions();
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -331,6 +334,9 @@ class MyRPGLifeApp {
   pauseTimer() {
     this.timerState.isRunning = false;
     this.timerState.isPaused = true;
+
+    this.exitFocusMode();
+    this.enableTimerOptions();
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -347,6 +353,9 @@ class MyRPGLifeApp {
     this.timerState.isRunning = false;
     this.timerState.isPaused = false;
     this.timerState.remaining = this.timerState.duration;
+
+    this.exitFocusMode();
+    this.enableTimerOptions();
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -362,6 +371,9 @@ class MyRPGLifeApp {
 
   completeTimer() {
     clearInterval(this.timer);
+
+    this.exitFocusMode();
+    this.enableTimerOptions();
     
     const minutes = this.timerState.duration / 60;
     const xpGained = this.calculateFocusXP(minutes);
@@ -413,6 +425,34 @@ class MyRPGLifeApp {
       timerProgress.style.strokeDasharray = circumference;
       timerProgress.style.strokeDashoffset = offset;
     }
+  }
+
+  enterFocusMode() {
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.classList.add('focus-mode');
+    }
+  }
+
+  exitFocusMode() {
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.classList.remove('focus-mode');
+    }
+  }
+
+  disableTimerOptions() {
+    const autoBreaks = document.getElementById('autoBreaks');
+    const spotifyMode = document.getElementById('spotifyMode');
+    if (autoBreaks) autoBreaks.disabled = true;
+    if (spotifyMode) spotifyMode.disabled = true;
+  }
+
+  enableTimerOptions() {
+    const autoBreaks = document.getElementById('autoBreaks');
+    const spotifyMode = document.getElementById('spotifyMode');
+    if (autoBreaks) autoBreaks.disabled = false;
+    if (spotifyMode) spotifyMode.disabled = false;
   }
 
   // Utility functions
@@ -1124,8 +1164,12 @@ class MyRPGLifeApp {
     const monday = new Date(now.setDate(now.getDate() - now.getDay() + 1));
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-    
+
     return `${monday.toLocaleDateString()} - ${sunday.toLocaleDateString()}`;
+  }
+
+  getLastWeeklyReview() {
+    return this.data.weeklyReviews[this.data.weeklyReviews.length - 1] || null;
   }
 
   canDoWeeklyReview() {
