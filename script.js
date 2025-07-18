@@ -1,8 +1,9 @@
 class MyRPGLifeApp {
-  constructor() {
+    constructor() {
     this.data = this.loadData();
     this.timer = null;
     this.weeklyCountdownInterval = null;
+    this.endSound = null;
     this.timerState = {
       isRunning: false,
       isPaused: false,
@@ -320,6 +321,7 @@ class MyRPGLifeApp {
 
   startTimer() {
     this.timerState.isRunning = true;
+    this.endSound = new Audio('assets/sounds/session-end.mp3');
     this.timerState.isPaused = false;
 
     const autoToggle = document.getElementById('autoBreaks');
@@ -425,6 +427,9 @@ class MyRPGLifeApp {
 
     this.exitFocusMode();
     this.enableTimerOptions();
+    if (this.data.settings?.soundNotifications && this.endSound) {
+      this.endSound.play();
+    }
     
     const minutes = this.timerState.duration / 60;
     const xpGained = this.calculateFocusXP(minutes);
@@ -532,8 +537,12 @@ class MyRPGLifeApp {
 
   endBreak() {
     clearInterval(this.timer);
+    this.endSound = new Audio('assets/sounds/session-end.mp3');
     this.timerState.isBreak = false;
     this.timerState.breakCount += 1;
+    if (this.data.settings?.soundNotifications) {
+      this.endSound.play();
+    }
     this.closeModal();
     this.startTimer();
   }
@@ -1112,10 +1121,10 @@ class MyRPGLifeApp {
                     <div class="toggle-subtitle">Sons de fin de session</div>
                   </div>
                 </div>
-                <label class="modern-toggle">
-                  <input type="checkbox" id="soundNotifications" checked>
-                  <span class="toggle-slider"></span>
-                </label>
+                <label class="modern-toggle">␊
+                  <input type="checkbox" id="soundNotifications" ${this.data.settings?.soundNotifications ? 'checked' : ''}>
+                  <span class="toggle-slider"></span>␊
+                </label>␊
               </div>
             </div>
           </div>
@@ -1638,7 +1647,15 @@ class MyRPGLifeApp {
     if (currentThemeOption) {
       currentThemeOption.classList.add('active');
     }
-    
+
+    const soundToggle = document.getElementById('soundNotifications');
+    if (soundToggle) {
+      soundToggle.addEventListener('change', () => {
+        this.data.settings = this.data.settings || {};
+        this.data.settings.soundNotifications = soundToggle.checked;
+      });
+    }
+
     // Other settings listeners can be added here
   }
 
@@ -1840,7 +1857,11 @@ class MyRPGLifeApp {
       dailyActions: {},
       xpHistory: [],
       achievements: [],
-      weeklyReviews: []
+      weeklyReviews: [],
+      settings: {
+        theme: 'default',
+        soundNotifications: true
+      }
     };
     
     try {
