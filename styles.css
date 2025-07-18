@@ -947,6 +947,12 @@ body {
   font-size: 0.95rem;
 }
 
+.break-info {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
 /* Focus Stats Panel */
 .focus-stats-panel {
   background: var(--card-bg);
@@ -1498,6 +1504,16 @@ body {
 
 .modal-body {
   padding: 1.5rem;
+}
+
+.break-body {
+  text-align: center;
+  font-size: 2rem;
+}
+
+.break-timer {
+  font-weight: bold;
+  color: var(--primary-color);
 }
 
 /* Sleep Modal */
