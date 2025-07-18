@@ -9,7 +9,12 @@ class MyRPGLifeApp {
       duration: 25 * 60, // 25 minutes en secondes
       remaining: 25 * 60,
       currentProject: null,
-      startTimestamp: null
+      startTimestamp: null,
+      isBreak: false,
+      breakRemaining: 0,
+      breakCount: 0,
+      totalBreaks: 0,
+      autoBreaks: false
     };
     
     this.init();
@@ -57,7 +62,7 @@ class MyRPGLifeApp {
 
     const resetBtn = document.getElementById('resetBtn');
     if (resetBtn) {
-      resetBtn.addEventListener('click', () => this.resetTimer());
+      resetBtn.addEventListener('click', () => this.cancelTimer());
     }
 
     // Duration controls
@@ -70,6 +75,11 @@ class MyRPGLifeApp {
     
     if (increaseBtn) {
       increaseBtn.addEventListener('click', () => this.adjustDuration(5));
+    }
+
+    const autoBreaksToggle = document.getElementById('autoBreaks');
+    if (autoBreaksToggle) {
+      autoBreaksToggle.addEventListener('change', () => this.updateBreakInfo());
     }
 
     // Project management
@@ -88,7 +98,7 @@ class MyRPGLifeApp {
     const modalOverlay = document.getElementById('modalOverlay');
     if (modalOverlay) {
       modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
+        if (e.target === modalOverlay && !this.timerState.isBreak) {
           this.closeModal();
         }
       });
@@ -312,6 +322,11 @@ class MyRPGLifeApp {
     this.timerState.isRunning = true;
     this.timerState.isPaused = false;
 
+    const autoToggle = document.getElementById('autoBreaks');
+    this.timerState.autoBreaks = autoToggle ? autoToggle.checked : false;
+    this.timerState.totalBreaks = Math.floor(this.timerState.duration / (25 * 60));
+    this.timerState.breakCount = this.timerState.breakCount || 0;
+
     this.timerState.startTimestamp = Date.now() -
       (this.timerState.duration - this.timerState.remaining) * 1000;
 
@@ -333,6 +348,15 @@ class MyRPGLifeApp {
 
       if (this.timerState.remaining <= 0) {
         this.completeTimer();
+      }
+
+      if (
+        this.timerState.autoBreaks &&
+        this.timerState.breakCount < this.timerState.totalBreaks &&
+        this.timerState.duration - this.timerState.remaining >=
+          (this.timerState.breakCount + 1) * 25 * 60
+      ) {
+        this.startBreak();
       }
     }, 1000);
   }
@@ -358,11 +382,28 @@ class MyRPGLifeApp {
     clearInterval(this.timer);
   }
 
+  cancelTimer() {
+    if (this.timerState.startTimestamp) {
+      const elapsed = Math.floor((Date.now() - this.timerState.startTimestamp) / 1000 / 60);
+      if (elapsed >= 5) {
+        const xpGained = this.calculateFocusXP(elapsed);
+        this.addXP(xpGained, `Session Annulée ${elapsed}min`);
+        this.recordFocusSession(elapsed);
+        this.updateFocusStats();
+        this.updateDashboard();
+      }
+    }
+    this.resetTimer();
+  }
+
   resetTimer() {
     this.timerState.isRunning = false;
     this.timerState.isPaused = false;
     this.timerState.remaining = this.timerState.duration;
     this.timerState.startTimestamp = null;
+    this.timerState.isBreak = false;
+    this.timerState.breakRemaining = 0;
+    this.timerState.breakCount = 0;
 
     this.exitFocusMode();
     this.enableTimerOptions();
@@ -410,6 +451,7 @@ class MyRPGLifeApp {
       }
       
       this.updateTimerDisplay();
+      this.updateBreakInfo();
     }
   }
 
@@ -438,6 +480,62 @@ class MyRPGLifeApp {
       timerProgress.style.strokeDasharray = circumference;
       timerProgress.style.strokeDashoffset = offset;
     }
+  }
+
+  updateBreakInfo() {
+    const info = document.getElementById('breakInfo');
+    const autoBreaksToggle = document.getElementById('autoBreaks');
+    if (!info || !autoBreaksToggle) return;
+    if (autoBreaksToggle.checked) {
+      const breaks = Math.floor(this.timerState.duration / (25 * 60));
+      info.textContent = `${breaks} pause${breaks > 1 ? 's' : ''} prévues`;
+    } else {
+      info.textContent = '';
+    }
+  }
+
+  showBreakModal() {
+    const modalContent = `
+      <div class="modal-header">
+        <h3>⏸ Pause</h3>
+      </div>
+      <div class="modal-body break-body">
+        <div class="break-timer" id="breakTimer">05:00</div>
+      </div>`;
+    this.showModal(modalContent);
+  }
+
+  updateBreakDisplay() {
+    const timerEl = document.getElementById('breakTimer');
+    if (timerEl) {
+      const m = Math.floor(this.timerState.breakRemaining / 60)
+        .toString()
+        .padStart(2, '0');
+      const s = (this.timerState.breakRemaining % 60).toString().padStart(2, '0');
+      timerEl.textContent = `${m}:${s}`;
+    }
+  }
+
+  startBreak() {
+    this.pauseTimer();
+    this.timerState.isBreak = true;
+    this.timerState.breakRemaining = 5 * 60;
+    this.showBreakModal();
+    this.timer = setInterval(() => {
+      this.timerState.breakRemaining -= 1;
+      this.updateBreakDisplay();
+      if (this.timerState.breakRemaining <= 0) {
+        this.endBreak();
+      }
+    }, 1000);
+  }
+
+  endBreak() {
+    clearInterval(this.timer);
+    this.timerState.isBreak = false;
+    this.timerState.breakCount += 1;
+    this.closeModal();
+    this.startTimer();
   }
 
   enterFocusMode() {
@@ -1601,6 +1699,7 @@ class MyRPGLifeApp {
   updateUI() {
     this.updateDashboard();
     this.updateTimerDisplay();
+    this.updateBreakInfo();
     this.updateFocusStats();
   }
 
