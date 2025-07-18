@@ -98,7 +98,7 @@ class MyRPGLifeApp {
     const modalOverlay = document.getElementById('modalOverlay');
     if (modalOverlay) {
       modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
+        if (e.target === modalOverlay && !this.timerState.isBreak) {
           this.closeModal();
         }
       });
