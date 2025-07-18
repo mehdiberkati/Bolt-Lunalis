@@ -584,9 +584,10 @@ class MyRPGLifeApp {
 
   getMandatorySessionsToday() {
     const today = new Date().toDateString();
-    return this.data.focusSessions.filter(session => 
-      new Date(session.date).toDateString() === today && session.duration >= 90
-    ).length;
+    const dailyMinutes = this.data.focusSessions
+      .filter(session => new Date(session.date).toDateString() === today)
+      .reduce((sum, session) => sum + session.duration, 0);
+    return Math.min(2, Math.floor(dailyMinutes / 90));
   }
 
   recordFocusSession(minutes) {
@@ -1781,7 +1782,7 @@ class MyRPGLifeApp {
     const dailySessions = todaySessions.length;
     const dailyMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
     const seasonMinutes = this.data.focusSessions.reduce((sum, s) => sum + s.duration, 0);
-    const mandatoryBlocks = todaySessions.filter(s => s.duration >= 90).length;
+    const mandatoryBlocks = Math.min(2, Math.floor(dailyMinutes / 90));
 
     const dailyFocusXP = this.data.xpHistory
       .filter(e => new Date(e.date).toDateString() === todayStr && e.reason.startsWith('Session Focus'))
@@ -1816,11 +1817,11 @@ class MyRPGLifeApp {
     const block2 = document.getElementById('block2');
     const block3 = document.getElementById('block3');
 
-    if (block1) block1.classList.toggle('completed', dailySessions >= 1);
-    if (block2) block2.classList.toggle('completed', dailySessions >= 2);
+    if (block1) block1.classList.toggle('completed', dailyMinutes >= 90);
+    if (block2) block2.classList.toggle('completed', dailyMinutes >= 180);
     if (block3) {
-      block3.classList.toggle('locked', dailySessions < 2);
-      block3.classList.toggle('completed', dailySessions >= 3);
+      block3.classList.toggle('locked', dailyMinutes < 180);
+      block3.classList.toggle('completed', dailyMinutes >= 270);
     }
   }
 
