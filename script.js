@@ -8,7 +8,8 @@ class MyRPGLifeApp {
       isPaused: false,
       duration: 25 * 60, // 25 minutes en secondes
       remaining: 25 * 60,
-      currentProject: null
+      currentProject: null,
+      startTimestamp: null
     };
     
     this.init();
@@ -17,6 +18,7 @@ class MyRPGLifeApp {
   init() {
     this.setupEventListeners();
     this.updateUI();
+    this.updateFocusStats();
     this.startWeeklyCountdown();
     this.startAutoSave();
   }
@@ -310,6 +312,9 @@ class MyRPGLifeApp {
     this.timerState.isRunning = true;
     this.timerState.isPaused = false;
 
+    this.timerState.startTimestamp = Date.now() -
+      (this.timerState.duration - this.timerState.remaining) * 1000;
+
     this.enterFocusMode();
     this.disableTimerOptions();
     
@@ -322,9 +327,10 @@ class MyRPGLifeApp {
     }
     
     this.timer = setInterval(() => {
-      this.timerState.remaining--;
+      const elapsed = Math.floor((Date.now() - this.timerState.startTimestamp) / 1000);
+      this.timerState.remaining = Math.max(this.timerState.duration - elapsed, 0);
       this.updateTimerDisplay();
-      
+
       if (this.timerState.remaining <= 0) {
         this.completeTimer();
       }
@@ -334,6 +340,9 @@ class MyRPGLifeApp {
   pauseTimer() {
     this.timerState.isRunning = false;
     this.timerState.isPaused = true;
+
+    const elapsed = Math.floor((Date.now() - this.timerState.startTimestamp) / 1000);
+    this.timerState.remaining = Math.max(this.timerState.duration - elapsed, 0);
 
     this.exitFocusMode();
     this.enableTimerOptions();
@@ -353,6 +362,7 @@ class MyRPGLifeApp {
     this.timerState.isRunning = false;
     this.timerState.isPaused = false;
     this.timerState.remaining = this.timerState.duration;
+    this.timerState.startTimestamp = null;
 
     this.exitFocusMode();
     this.enableTimerOptions();
@@ -380,7 +390,10 @@ class MyRPGLifeApp {
     
     this.addXP(xpGained, `Session Focus ${minutes}min`);
     this.recordFocusSession(minutes);
-    
+
+    this.updateFocusStats();
+    this.updateDashboard();
+
     this.showNotification(`🎯 Session terminée ! +${xpGained} XP`, 'success');
     this.resetTimer();
   }
@@ -1588,6 +1601,7 @@ class MyRPGLifeApp {
   updateUI() {
     this.updateDashboard();
     this.updateTimerDisplay();
+    this.updateFocusStats();
   }
 
   updateDashboard() {
@@ -1639,6 +1653,82 @@ class MyRPGLifeApp {
     if (rankName) rankName.textContent = currentRank.name;
     if (rankBadge) rankBadge.textContent = currentRank.badge;
     if (userAvatar) userAvatar.textContent = currentRank.avatar;
+  }
+
+  updateFocusStats() {
+    const todayStr = new Date().toDateString();
+
+    const todaySessions = this.data.focusSessions.filter(
+      s => new Date(s.date).toDateString() === todayStr
+    );
+
+    const dailySessions = todaySessions.length;
+    const dailyMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+    const seasonMinutes = this.data.focusSessions.reduce((sum, s) => sum + s.duration, 0);
+    const mandatoryBlocks = todaySessions.filter(s => s.duration >= 90).length;
+
+    const dailyFocusXP = this.data.xpHistory
+      .filter(e => new Date(e.date).toDateString() === todayStr && e.reason.startsWith('Session Focus'))
+      .reduce((sum, e) => sum + e.amount, 0);
+
+    const streak = this.calculateStreak();
+
+    const dailySessionsEl = document.getElementById('dailySessions');
+    if (dailySessionsEl) dailySessionsEl.textContent = dailySessions;
+
+    const dailyFocusTimeEl = document.getElementById('dailyFocusTime');
+    if (dailyFocusTimeEl) dailyFocusTimeEl.textContent = `${dailyMinutes}min`;
+
+    const seasonFocusTimeEl = document.getElementById('seasonFocusTime');
+    if (seasonFocusTimeEl) seasonFocusTimeEl.textContent = `${Math.floor(seasonMinutes / 60)}h`;
+
+    const mandatoryBlocksEl = document.getElementById('mandatoryBlocks');
+    if (mandatoryBlocksEl) mandatoryBlocksEl.textContent = `${mandatoryBlocks}/2`;
+
+    const dailyFocusXPEl = document.getElementById('dailyFocusXP');
+    if (dailyFocusXPEl) dailyFocusXPEl.textContent = dailyFocusXP;
+
+    const focusStreakEl = document.getElementById('focusStreak');
+    if (focusStreakEl) focusStreakEl.textContent = streak;
+
+    const progressFill = document.getElementById('dailyProgressFill');
+    if (progressFill) {
+      progressFill.style.width = `${Math.min(100, (dailySessions / 3) * 100)}%`;
+    }
+
+    const block1 = document.getElementById('block1');
+    const block2 = document.getElementById('block2');
+    const block3 = document.getElementById('block3');
+
+    if (block1) block1.classList.toggle('completed', dailySessions >= 1);
+    if (block2) block2.classList.toggle('completed', dailySessions >= 2);
+    if (block3) {
+      block3.classList.toggle('locked', dailySessions < 2);
+      block3.classList.toggle('completed', dailySessions >= 3);
+    }
+  }
+
+  calculateStreak() {
+    const xpByDay = new Map();
+    this.data.xpHistory.forEach(entry => {
+      const day = new Date(entry.date).toDateString();
+      xpByDay.set(day, (xpByDay.get(day) || 0) + entry.amount);
+    });
+
+    let streak = 0;
+    const today = new Date();
+    while (true) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - streak);
+      const dayStr = date.toDateString();
+      const xp = xpByDay.get(dayStr) || 0;
+      if (xp >= 15) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
   }
 
   // Data management
