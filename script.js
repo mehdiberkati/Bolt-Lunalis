@@ -4,6 +4,7 @@ class MyRPGLifeApp {
     this.timer = null;
     this.weeklyCountdownInterval = null;
     this.endSound = null;
+    this.chartRange = this.data.settings?.chartRange || 7;
     this.timerState = {
       isRunning: false,
       isPaused: false,
@@ -968,18 +969,28 @@ class MyRPGLifeApp {
         </div>
       </div>
       
+      <div class="chart-range-select">
+        <label for="chartRange">Période :</label>
+        <select id="chartRange">
+          <option value="7">7 jours</option>
+          <option value="30">30 jours</option>
+          <option value="custom">Personnalisé</option>
+        </select>
+        <input type="number" id="customRange" min="1" max="365" style="display:none" />
+      </div>
+
       <div class="progression-charts">
         <div class="chart-container">
-          <h4>📈 Évolution XP (7 derniers jours)</h4>
+          <h4>📈 Évolution XP (${this.chartRange} derniers jours)</h4>
           <div class="xp-chart">
-            ${this.renderXPChart()}
+            ${this.renderXPChart(this.chartRange)}
           </div>
         </div>
-        
+
         <div class="chart-container">
           <h4>🎯 Sessions Focus par Jour</h4>
           <div class="focus-chart">
-            ${this.renderFocusChart()}
+            ${this.renderFocusChart(this.chartRange)}
           </div>
         </div>
       </div>
@@ -987,6 +998,7 @@ class MyRPGLifeApp {
       <div class="progression-details">
         <div class="detail-section">
           <h4>🏆 Progression par Rang</h4>
+          ${this.renderRankProgressBar()}
           <div class="ranks-progression">
             ${this.renderRanksProgression()}
           </div>
@@ -1009,6 +1021,30 @@ class MyRPGLifeApp {
         </div>
       </div>
     `;
+
+    const rangeSelect = document.getElementById('chartRange');
+    const customInput = document.getElementById('customRange');
+    if (rangeSelect) {
+      rangeSelect.value = this.chartRange > 30 ? 'custom' : this.chartRange.toString();
+      rangeSelect.addEventListener('change', () => {
+        if (rangeSelect.value === 'custom') {
+          customInput.style.display = 'inline-block';
+        } else {
+          customInput.style.display = 'none';
+          this.chartRange = parseInt(rangeSelect.value, 10);
+          this.data.settings.chartRange = this.chartRange;
+          this.renderProgression();
+        }
+      });
+    }
+    if (customInput) {
+      if (this.chartRange > 30) customInput.value = this.chartRange;
+      customInput.addEventListener('change', () => {
+        this.chartRange = parseInt(customInput.value, 10) || 7;
+        this.data.settings.chartRange = this.chartRange;
+        this.renderProgression();
+      });
+    }
   }
 
   renderProjectsFocusStats() {
@@ -1484,13 +1520,13 @@ class MyRPGLifeApp {
     return Math.round(average);
   }
 
-  renderXPChart() {
-    const last7Days = this.getLast7DaysXP();
-    const maxXP = Math.max(...last7Days.map(d => d.xp), 15);
+  renderXPChart(days = this.chartRange) {
+    const data = this.getLastDaysXP(days);
+    const maxXP = Math.max(...data.map(d => d.xp), 15);
     
     return `
       <div class="chart-bars">
-        ${last7Days.map(day => `
+        ${data.map(day => `
           <div class="chart-bar">
             <div class="bar-fill" style="height: ${(day.xp / maxXP) * 100}%"></div>
             <div class="bar-label">${day.day}</div>
@@ -1501,13 +1537,13 @@ class MyRPGLifeApp {
     `;
   }
 
-  renderFocusChart() {
-    const last7Days = this.getLast7DaysFocus();
-    const maxSessions = Math.max(...last7Days.map(d => d.sessions), 3);
+  renderFocusChart(days = this.chartRange) {
+    const data = this.getLastDaysFocus(days);
+    const maxSessions = Math.max(...data.map(d => d.sessions), 3);
     
     return `
       <div class="chart-bars">
-        ${last7Days.map(day => `
+        ${data.map(day => `
           <div class="chart-bar">
             <div class="bar-fill focus" style="height: ${(day.sessions / maxSessions) * 100}%"></div>
             <div class="bar-label">${day.day}</div>
@@ -1518,48 +1554,48 @@ class MyRPGLifeApp {
     `;
   }
 
-  getLast7DaysXP() {
+  getLastDaysXP(daysCount) {
     const days = [];
     const today = new Date();
-    
-    for (let i = 6; i >= 0; i--) {
+
+    for (let i = daysCount - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
-      
-      // Calculate XP for this day (simplified)
-      const dayXP = i === 0 ? this.data.dailyXP : Math.floor(Math.random() * 20);
-      
+
+      const dayXP = this.data.xpHistory
+        .filter(e => new Date(e.date).toDateString() === date.toDateString())
+        .reduce((sum, e) => sum + e.amount, 0);
+
       days.push({
         day: dayName,
         xp: dayXP
       });
     }
-    
+
     return days;
   }
 
-  getLast7DaysFocus() {
+  getLastDaysFocus(daysCount) {
     const days = [];
     const today = new Date();
-    
-    for (let i = 6; i >= 0; i--) {
+
+    for (let i = daysCount - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
-      
-      // Calculate sessions for this day
+
       const todaySessions = this.data.focusSessions.filter(session => {
         const sessionDate = new Date(session.date);
         return sessionDate.toDateString() === date.toDateString();
       }).length;
-      
+
       days.push({
         day: dayName,
-        sessions: i === 0 ? todaySessions : Math.floor(Math.random() * 4)
+        sessions: todaySessions
       });
     }
-    
+
     return days;
   }
 
@@ -1590,6 +1626,43 @@ class MyRPGLifeApp {
         </div>
       `;
     }).join('');
+  }
+
+  renderRankProgressBar() {
+    const ranks = [
+      { name: 'Paumé', xp: 0 },
+      { name: 'Apprenti', xp: 100 },
+      { name: 'Disciple', xp: 300 },
+      { name: 'Adepte', xp: 600 },
+      { name: 'Expert', xp: 1000 },
+      { name: 'Virtuose', xp: 1500 },
+      { name: 'Légende', xp: 2200 },
+      { name: 'Élu du Destin', xp: 3000 }
+    ];
+
+    const current = this.getCurrentRank();
+    const currentIndex = ranks.findIndex(r => r.name === current.name);
+    const next = ranks[Math.min(currentIndex + 1, ranks.length - 1)];
+
+    if (next.xp === current.xp) {
+      return '<p class="next-rank-info">Rang maximum atteint</p>';
+    }
+
+    const percent = Math.min(
+      100,
+      Math.round(
+        ((this.data.totalXP - current.xp) / (next.xp - current.xp)) * 100
+      )
+    );
+
+    return `
+      <div class="next-rank-bar">
+        <div class="next-rank-info">Prochain rang : ${next.name} (${next.xp} XP)</div>
+        <div class="next-rank-progress">
+          <div class="next-rank-fill" style="width: ${percent}%"></div>
+        </div>
+      </div>
+    `;
   }
 
   renderProjectsStats() {
@@ -1861,13 +1934,22 @@ class MyRPGLifeApp {
       weeklyReviews: [],
       settings: {
         theme: 'default',
-        soundNotifications: true
+        soundNotifications: true,
+        chartRange: 7
       }
     };
     
     try {
       const saved = localStorage.getItem('myRPGLifeData');
-      return saved ? { ...defaultData, ...JSON.parse(saved) } : defaultData;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...defaultData,
+          ...parsed,
+          settings: { ...defaultData.settings, ...(parsed.settings || {}) }
+        };
+      }
+      return defaultData;
     } catch (error) {
       console.error('Error loading data:', error);
       return defaultData;
