@@ -2026,11 +2026,15 @@ export class MyRPGLifeApp {
   }
 }
 
-// Initialize the app when DOM is loaded
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.app = new MyRPGLifeApp();
-  });
-}
-
+// Expose class for tests and instantiate in browser
 export default MyRPGLifeApp;
+if (typeof window !== 'undefined') {
+  const initApp = () => {
+    window.app = new MyRPGLifeApp();
+  };
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+}
