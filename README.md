@@ -32,6 +32,7 @@ Application immersive de gamification pour booster la productivité et la discip
 - Graphiques basés sur l'historique réel des sessions
 - Sélecteur 7/30 jours ou personnalisé
 - Barre de progression vers le prochain rang
+- Statistiques quotidiennes réinitialisées à minuit
 
 ### 🏆 Système de Rangs
 

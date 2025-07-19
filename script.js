@@ -24,10 +24,12 @@ class MyRPGLifeApp {
 
   init() {
     this.setupEventListeners();
+    this.checkDailyReset();
     this.updateUI();
     this.updateFocusStats();
     this.startWeeklyCountdown();
     this.startAutoSave();
+    this.scheduleDailyReset();
   }
 
   setupEventListeners() {
@@ -611,6 +613,7 @@ class MyRPGLifeApp {
   }
 
   addXP(amount, reason) {
+    this.checkDailyReset();
     this.data.totalXP += amount;
     this.data.dailyXP += amount;
     
@@ -1926,6 +1929,7 @@ class MyRPGLifeApp {
     const defaultData = {
       totalXP: 0,
       dailyXP: 0,
+      lastDailyReset: new Date().toDateString(),
       projects: [],
       focusSessions: [],
       dailyActions: {},
@@ -1946,7 +1950,8 @@ class MyRPGLifeApp {
         return {
           ...defaultData,
           ...parsed,
-          settings: { ...defaultData.settings, ...(parsed.settings || {}) }
+          settings: { ...defaultData.settings, ...(parsed.settings || {}) },
+          lastDailyReset: parsed.lastDailyReset || defaultData.lastDailyReset
         };
       }
       return defaultData;
@@ -1968,6 +1973,30 @@ class MyRPGLifeApp {
     setInterval(() => {
       this.saveData();
     }, 30000); // Save every 30 seconds
+  }
+
+  scheduleDailyReset() {
+    const now = new Date();
+    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const msUntilMidnight = next - now;
+    setTimeout(() => {
+      this.resetDailyStats();
+      this.scheduleDailyReset();
+    }, msUntilMidnight);
+  }
+
+  checkDailyReset() {
+    const today = new Date().toDateString();
+    if (this.data.lastDailyReset !== today) {
+      this.resetDailyStats();
+    }
+  }
+
+  resetDailyStats() {
+    this.data.dailyXP = 0;
+    this.data.lastDailyReset = new Date().toDateString();
+    this.updateUI();
+    this.saveData();
   }
 
   // Double or Nothing functions
