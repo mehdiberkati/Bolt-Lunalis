@@ -1,3 +1,8 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { SUPABASE_URL, SUPABASE_KEY } from './supabase-config.js';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 class MyRPGLifeApp {
     constructor() {
     this.data = this.loadData();
@@ -21,8 +26,9 @@ class MyRPGLifeApp {
     this.init();
   }
 
-  init() {
+  async init() {
     this.setupEventListeners();
+    await this.loadCloudData();
     this.updateUI();
     this.updateFocusStats();
     this.startWeeklyCountdown();
@@ -1874,18 +1880,51 @@ class MyRPGLifeApp {
     }
   }
 
+  async loadCloudData() {
+    try {
+      const { data, error } = await supabase
+        .from('productivity')
+        .select('data')
+        .eq('id', 1)
+        .single();
+      if (error) {
+        console.error('Supabase load error:', error.message);
+        return;
+      }
+      if (data && data.data) {
+        this.data = { ...this.data, ...data.data };
+      }
+    } catch (err) {
+      console.error('Error loading data from Supabase:', err);
+    }
+  }
+
   saveData() {
     try {
       localStorage.setItem('myRPGLifeData', JSON.stringify(this.data));
+      this.saveCloudData();
     } catch (error) {
       console.error('Error saving data:', error);
+    }
+  }
+
+  async saveCloudData() {
+    try {
+      const { error } = await supabase
+        .from('productivity')
+        .upsert({ id: 1, data: this.data });
+      if (error) {
+        console.error('Supabase save error:', error.message);
+      }
+    } catch (err) {
+      console.error('Error saving data to Supabase:', err);
     }
   }
 
   startAutoSave() {
     setInterval(() => {
       this.saveData();
-    }, 30000); // Save every 30 seconds
+    }, 30000); // Save every 30 seconds and sync cloud
   }
 
   // Double or Nothing functions

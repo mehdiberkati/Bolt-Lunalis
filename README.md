@@ -127,17 +127,23 @@ Application immersive de gamification pour booster la productivité et la discip
 
 ## 💾 Sauvegarde
 
-- Données sauvegardées automatiquement dans le navigateur
+- Données sauvegardées automatiquement dans le navigateur et sur Supabase
 - Export/import des données disponible
 - Sauvegarde toutes les 30 secondes
-- Synchronisation multi-appareils via IndexedDB ou backend (à venir)
+- Synchronisation multi-appareils via Supabase
 
 ## 🔧 Configuration Technique
 
 - **Technologies**: HTML5, CSS3, JavaScript ES6+
-- **Stockage**: LocalStorage
+- **Stockage**: LocalStorage + Supabase
 - **Compatibilité**: Navigateurs modernes
 - **Responsive**: Optimisé pour PC
+
+### ⚙️ Configuration Supabase
+
+1. Copier `supabase-config.example.js` en `supabase-config.js`
+2. Remplacer les valeurs `SUPABASE_URL` et `SUPABASE_KEY` par celles de votre projet
+3. Créer une table `productivity` avec les colonnes `id` (int, primary key) et `data` (json)
 
 ## 🎯 Objectifs de Performance
 
