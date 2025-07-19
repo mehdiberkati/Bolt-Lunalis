@@ -29,6 +29,10 @@ Application immersive de gamification pour booster la productivité et la discip
 - **Sommeil**: >7h avant 22h = +2 XP, avant minuit = +1 XP
 - **Punitions**: Instagram +1h = -3 XP, Musique +1h30 = -5 XP
 - **Quota minimum**: 15 XP/jour
+- Graphiques basés sur l'historique réel des sessions
+- Sélecteur 7/30 jours ou personnalisé
+- Barre de progression vers le prochain rang
+- Statistiques quotidiennes réinitialisées à minuit
 
 ### 🏆 Système de Rangs
 
