@@ -1,4 +1,4 @@
-class MyRPGLifeApp {
+export class MyRPGLifeApp {
     constructor() {
     this.data = this.loadData();
     this.timer = null;
@@ -2027,6 +2027,10 @@ class MyRPGLifeApp {
 }
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  window.app = new MyRPGLifeApp();
-});
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.app = new MyRPGLifeApp();
+  });
+}
+
+export default MyRPGLifeApp;
