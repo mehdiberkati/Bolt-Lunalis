@@ -18,6 +18,9 @@ class MyRPGLifeApp {
       totalBreaks: 0,
       autoBreaks: false
     };
+
+    // Project editing state
+    this.editingProjectId = null;
     
     this.init();
   }
@@ -627,11 +630,32 @@ class MyRPGLifeApp {
   }
 
   // Project management
-  showProjectForm() {
+  showProjectForm(id = null) {
     this.showSection('projects');
     const projectForm = document.getElementById('projectForm');
+    const saveBtn = projectForm?.querySelector('.btn-project.primary');
+
+    this.editingProjectId = id;
+
     if (projectForm) {
       projectForm.style.display = 'block';
+    }
+
+    if (saveBtn) {
+      saveBtn.textContent = id ? 'Mettre à jour' : 'Créer le Projet';
+    }
+
+    const nameInput = document.getElementById('projectName');
+    const descInput = document.getElementById('projectDescription');
+    const timeGoalInput = document.getElementById('projectTimeGoal');
+
+    if (id) {
+      const project = this.data.projects.find(p => p.id === id);
+      if (project) {
+        if (nameInput) nameInput.value = project.name;
+        if (descInput) descInput.value = project.description;
+        if (timeGoalInput) timeGoalInput.value = project.timeGoal;
+      }
     }
   }
 
@@ -639,8 +663,18 @@ class MyRPGLifeApp {
     const nameInput = document.getElementById('projectName');
     const descInput = document.getElementById('projectDescription');
     const timeGoalInput = document.getElementById('projectTimeGoal');
-    
-    if (nameInput && nameInput.value.trim()) {
+
+    if (!nameInput || !nameInput.value.trim()) return;
+
+    if (this.editingProjectId) {
+      const project = this.data.projects.find(p => p.id === this.editingProjectId);
+      if (project) {
+        project.name = nameInput.value.trim();
+        project.description = descInput ? descInput.value.trim() : '';
+        project.timeGoal = timeGoalInput ? parseInt(timeGoalInput.value) || 0 : 0;
+        this.showNotification('Projet mis à jour !', 'success');
+      }
+    } else {
       const project = {
         id: Date.now(),
         name: nameInput.value.trim(),
@@ -649,27 +683,34 @@ class MyRPGLifeApp {
         createdAt: new Date().toISOString(),
         totalTime: 0
       };
-      
       this.data.projects.push(project);
       this.showNotification('Projet créé avec succès !', 'success');
-      this.cancelProject();
-      this.renderProjects();
     }
+
+    this.cancelProject();
+    this.renderProjects();
+    this.saveData();
   }
 
   cancelProject() {
     const projectForm = document.getElementById('projectForm');
+    const saveBtn = projectForm?.querySelector('.btn-project.primary');
+
     if (projectForm) {
       projectForm.style.display = 'none';
     }
-    
+
     const nameInput = document.getElementById('projectName');
     const descInput = document.getElementById('projectDescription');
     const timeGoalInput = document.getElementById('projectTimeGoal');
-    
+
     if (nameInput) nameInput.value = '';
     if (descInput) descInput.value = '';
     if (timeGoalInput) timeGoalInput.value = '';
+
+    if (saveBtn) saveBtn.textContent = 'Créer le Projet';
+
+    this.editingProjectId = null;
   }
 
   renderProjects() {
@@ -691,15 +732,21 @@ class MyRPGLifeApp {
       <div class="project-card">
         <div class="project-header">
           <h3>${project.name}</h3>
-          <div class="project-progress-ring">
-            <svg class="progress-ring" width="60" height="60">
-              <circle cx="30" cy="30" r="25" class="progress-ring-bg"></circle>
-              <circle cx="30" cy="30" r="25" class="progress-ring-fill" 
-                style="stroke-dasharray: ${2 * Math.PI * 25}; 
-                       stroke-dashoffset: ${2 * Math.PI * 25 * (1 - Math.min(project.totalTime / 60 / (project.timeGoal || 1), 1))}"></circle>
-            </svg>
-            <div class="progress-percentage">
-              ${project.timeGoal > 0 ? Math.round((project.totalTime / 60) / project.timeGoal * 100) : 0}%
+          <div class="project-header-right">
+            <div class="project-progress-ring">
+              <svg class="progress-ring" width="60" height="60">
+                <circle cx="30" cy="30" r="25" class="progress-ring-bg"></circle>
+                <circle cx="30" cy="30" r="25" class="progress-ring-fill"
+                  style="stroke-dasharray: ${2 * Math.PI * 25};
+                         stroke-dashoffset: ${2 * Math.PI * 25 * (1 - Math.min(project.totalTime / 60 / (project.timeGoal || 1), 1))}"></circle>
+              </svg>
+              <div class="progress-percentage">
+                ${project.timeGoal > 0 ? Math.round((project.totalTime / 60) / project.timeGoal * 100) : 0}%
+              </div>
+            </div>
+            <div class="project-controls">
+              <button class="project-edit" onclick="app.editProject(${project.id})" aria-label="Modifier">✏️</button>
+              <button class="project-delete" onclick="app.deleteProject(${project.id})" aria-label="Supprimer">🗑️</button>
             </div>
           </div>
         </div>
@@ -743,11 +790,25 @@ class MyRPGLifeApp {
   updateProjectSelector() {
     const projectSelect = document.getElementById('projectSelect');
     if (!projectSelect) return;
-    
+
     projectSelect.innerHTML = '<option value="">Sélectionner un projet</option>' +
-      this.data.projects.map(project => 
+      this.data.projects.map(project =>
         `<option value="${project.id}">${project.name}</option>`
       ).join('');
+  }
+
+  editProject(id) {
+    this.showProjectForm(id);
+  }
+
+  deleteProject(id) {
+    const confirmed = confirm('Supprimer ce projet ?');
+    if (!confirmed) return;
+
+    this.data.projects = this.data.projects.filter(p => p.id !== id);
+    this.showNotification('Projet supprimé', 'info');
+    this.renderProjects();
+    this.saveData();
   }
 
   // Modal functions

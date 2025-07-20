@@ -1200,7 +1200,7 @@ body {
 }
 
 .btn-project.primary:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
@@ -1212,6 +1212,7 @@ body {
 
 .btn-project.secondary:hover {
   background: var(--border-color);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .projects-header {
@@ -1231,13 +1232,13 @@ body {
   border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .project-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.02);
   border-color: var(--primary-color);
-  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 12px 35px rgba(0, 212, 255, 0.2);
 }
 
 .project-card h3 {
@@ -1284,6 +1285,36 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+}
+
+.project-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.project-controls {
+  display: flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover .project-controls {
+  opacity: 1;
+}
+
+.project-controls button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.project-controls button:hover {
+  color: var(--primary-color);
+  transform: scale(1.2);
 }
 
 .project-progress-ring {
