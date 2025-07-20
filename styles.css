@@ -1504,6 +1504,12 @@ body {
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
 }
 
 .modal {
@@ -1514,7 +1520,7 @@ body {
   max-height: 80vh;
   overflow-y: auto;
   border: 1px solid var(--border-color);
-  animation: modalSlideIn 0.3s ease;
+  animation: modalPop 0.45s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .modal.fullscreen {
@@ -1524,12 +1530,16 @@ body {
   height: 90vh;
 }
 
-@keyframes modalSlideIn {
-  from {
+@keyframes modalPop {
+  0% {
     opacity: 0;
-    transform: translateY(-50px) scale(0.9);
+    transform: translateY(-50px) scale(0.8);
   }
-  to {
+  60% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.05);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
@@ -3145,6 +3155,7 @@ select:focus {
 .detail-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.95rem;
 }
 
 .detail-table th,
@@ -3152,9 +3163,19 @@ select:focus {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--border-color);
   text-align: left;
+  transition: background 0.3s, transform 0.3s;
 }
 
 .detail-table th {
   background: var(--accent-bg);
   color: var(--text-primary);
+}
+
+.detail-table tbody tr:nth-child(odd) {
+  background: var(--secondary-bg);
+}
+
+.detail-table tbody tr:hover {
+  background: var(--accent-bg);
+  transform: translateX(5px);
 }

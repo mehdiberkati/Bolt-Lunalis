@@ -824,6 +824,7 @@ class MyRPGLifeApp {
         modal.classList.remove('fullscreen');
       }
       modalOverlay.style.display = 'flex';
+      requestAnimationFrame(() => modalOverlay.classList.add('show'));
     }
   }
 
@@ -831,7 +832,10 @@ class MyRPGLifeApp {
     const modalOverlay = document.getElementById('modalOverlay');
     const modal = document.getElementById('modal');
     if (modalOverlay) {
-      modalOverlay.style.display = 'none';
+      modalOverlay.classList.remove('show');
+      setTimeout(() => {
+        modalOverlay.style.display = 'none';
+      }, 300);
     }
     if (modal) {
       modal.classList.remove('fullscreen');
@@ -1687,7 +1691,9 @@ class MyRPGLifeApp {
   showXPDetails() {
     const data = this.getLastDaysXP(this.chartRange);
     const rows = data
-      .map(d => `<tr><td>${d.date}</td><td>${d.xp}</td></tr>`)
+      .map((d, i) =>
+        `<tr class="fade-in-up" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.xp}</td></tr>`
+      )
       .join('');
     const modalContent = `
       <div class="modal-header">
@@ -1709,7 +1715,9 @@ class MyRPGLifeApp {
   showFocusDetails() {
     const data = this.getLastDaysFocus(this.chartRange);
     const rows = data
-      .map(d => `<tr><td>${d.date}</td><td>${d.sessions}</td></tr>`)
+      .map((d, i) =>
+        `<tr class="fade-in-up" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.sessions}</td></tr>`
+      )
       .join('');
     const modalContent = `
       <div class="modal-header">
