@@ -1,6 +1,9 @@
+import { supabase, fetchUserData, saveUserData } from './supabase.js';
+
 class MyRPGLifeApp {
-    constructor() {
-    this.data = this.loadData();
+  constructor(initialData = null, user = null) {
+    this.user = user;
+    this.data = initialData || this.loadData();
     this.timer = null;
     this.weeklyCountdownInterval = null;
     this.endSound = null;
@@ -2025,6 +2028,10 @@ class MyRPGLifeApp {
   saveData() {
     try {
       localStorage.setItem('myRPGLifeData', JSON.stringify(this.data));
+      if (this.user) {
+        // Sauvegarde distante pour synchronisation multi-appareils
+        saveUserData(this.user.id, this.data);
+      }
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -2087,7 +2094,46 @@ class MyRPGLifeApp {
   }
 }
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  window.app = new MyRPGLifeApp();
+// Initialise l'app une fois l'utilisateur authentifié
+document.addEventListener('DOMContentLoaded', async () => {
+  const loginContainer = document.getElementById('loginContainer');
+  const appContainer = document.getElementById('appContainer');
+  const form = document.getElementById('loginForm');
+  const signupBtn = document.getElementById('signupBtn');
+
+  // Tente de récupérer la session existante
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const serverData = await fetchUserData(user.id);
+    window.app = new MyRPGLifeApp(serverData || null, user);
+    loginContainer.style.display = 'none';
+    appContainer.style.display = 'flex';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    const userData = await fetchUserData(data.user.id);
+    loginContainer.style.display = 'none';
+    appContainer.style.display = 'flex';
+    window.app = new MyRPGLifeApp(userData || null, data.user);
+  });
+
+  signupBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      alert(error.message);
+    } else {
+      alert('Inscription réussie ! Vérifiez vos emails puis connectez-vous.');
+    }
+  });
 });

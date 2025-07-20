@@ -3096,6 +3096,44 @@ select:focus {
   to { transform: translateY(-50%); }
 }
 
+/* ------- Authentification ------- */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--primary-bg);
+}
+
+.login-container form {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.login-container input {
+  display: block;
+  width: 220px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+}
+
+.login-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-actions button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
 /* Focus Mode */
 .app-container.focus-mode .sidebar,
 .app-container.focus-mode .main-content > .content-section:not(#focus) {
