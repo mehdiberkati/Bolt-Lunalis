@@ -340,6 +340,12 @@ class MyRPGLifeApp {
 
     this.enterFocusMode();
     this.disableTimerOptions();
+
+    const timerCircle = document.querySelector('.timer-circle');
+    if (timerCircle) {
+      timerCircle.classList.add('start-pop');
+      setTimeout(() => timerCircle.classList.remove('start-pop'), 400);
+    }
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');

@@ -745,6 +745,16 @@ body {
   width: 300px;
   height: 300px;
   margin: 2rem auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.timer-circle:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6));
+}
+
+.timer-circle.start-pop {
+  animation: timerPop 0.4s ease forwards;
 }
 
 .timer-svg {
@@ -857,6 +867,7 @@ body {
 
 .timer-btn.primary.running {
   background: var(--warning-color);
+  animation: pulse 1.2s infinite;
 }
 
 .timer-btn.secondary {
@@ -1048,6 +1059,12 @@ body {
   border: 2px solid var(--border-color);
   transition: all 0.3s ease;
   position: relative;
+}
+
+.block-modern:not(.locked):hover {
+  transform: translateY(-3px) scale(1.03);
+  border-color: var(--primary-color);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.2);
 }
 
 .block-modern.completed {
@@ -3094,6 +3111,18 @@ select:focus {
 @keyframes starsMove {
   from { transform: translateY(0); }
   to { transform: translateY(-50%); }
+}
+
+@keyframes timerPop {
+  0% { transform: scale(0.9); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%,
+  100% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 212, 255, 0.5); }
+  50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 212, 255, 0.8); }
 }
 
 /* Focus Mode */
