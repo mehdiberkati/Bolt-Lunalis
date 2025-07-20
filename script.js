@@ -1,3 +1,5 @@
+import { RANKS } from './ranks.js';
+
 class MyRPGLifeApp {
     constructor() {
     this.data = this.loadData();
@@ -1603,16 +1605,7 @@ class MyRPGLifeApp {
   }
 
   renderRanksProgression() {
-    const ranks = [
-      { name: 'Paumé', xp: 0, badge: 'E', avatar: '😵' },
-      { name: 'Apprenti', xp: 100, badge: 'D', avatar: '🎯' },
-      { name: 'Disciple', xp: 300, badge: 'C', avatar: '⚡' },
-      { name: 'Adepte', xp: 600, badge: 'B', avatar: '🔥' },
-      { name: 'Expert', xp: 1000, badge: 'A', avatar: '💎' },
-      { name: 'Virtuose', xp: 1500, badge: 'S', avatar: '👑' },
-      { name: 'Légende', xp: 2200, badge: 'SS', avatar: '🌟' },
-      { name: 'Élu du Destin', xp: 3000, badge: 'SSS', avatar: '🌙' }
-    ];
+    const ranks = RANKS;
     
     return ranks.map(rank => {
       const isUnlocked = this.data.totalXP >= rank.xp;
@@ -1632,16 +1625,7 @@ class MyRPGLifeApp {
   }
 
   renderRankProgressBar() {
-    const ranks = [
-      { name: 'Paumé', xp: 0 },
-      { name: 'Apprenti', xp: 100 },
-      { name: 'Disciple', xp: 300 },
-      { name: 'Adepte', xp: 600 },
-      { name: 'Expert', xp: 1000 },
-      { name: 'Virtuose', xp: 1500 },
-      { name: 'Légende', xp: 2200 },
-      { name: 'Élu du Destin', xp: 3000 }
-    ];
+    const ranks = RANKS;
 
     const current = this.getCurrentRank();
     const currentIndex = ranks.findIndex(r => r.name === current.name);
@@ -1682,16 +1666,7 @@ class MyRPGLifeApp {
   }
 
   getCurrentRank() {
-    const ranks = [
-      { name: 'Paumé', xp: 0, badge: 'E', avatar: '😵' },
-      { name: 'Apprenti', xp: 100, badge: 'D', avatar: '🎯' },
-      { name: 'Disciple', xp: 300, badge: 'C', avatar: '⚡' },
-      { name: 'Adepte', xp: 600, badge: 'B', avatar: '🔥' },
-      { name: 'Expert', xp: 1000, badge: 'A', avatar: '💎' },
-      { name: 'Virtuose', xp: 1500, badge: 'S', avatar: '👑' },
-      { name: 'Légende', xp: 2200, badge: 'SS', avatar: '🌟' },
-      { name: 'Élu du Destin', xp: 3000, badge: 'SSS', avatar: '🌙' }
-    ];
+    const ranks = RANKS;
     
     let currentRank = ranks[0];
     for (let i = ranks.length - 1; i >= 0; i--) {
@@ -1820,16 +1795,7 @@ class MyRPGLifeApp {
   }
 
   updateRankDisplay() {
-    const ranks = [
-      { name: 'Paumé', xp: 0, badge: 'E', avatar: '😵' },
-      { name: 'Apprenti', xp: 100, badge: 'D', avatar: '🎯' },
-      { name: 'Disciple', xp: 300, badge: 'C', avatar: '⚡' },
-      { name: 'Adepte', xp: 600, badge: 'B', avatar: '🔥' },
-      { name: 'Expert', xp: 1000, badge: 'A', avatar: '💎' },
-      { name: 'Virtuose', xp: 1500, badge: 'S', avatar: '👑' },
-      { name: 'Légende', xp: 2200, badge: 'SS', avatar: '🌟' },
-      { name: 'Élu du Destin', xp: 3000, badge: 'SSS', avatar: '🌙' }
-    ];
+    const ranks = RANKS;
     
     let currentRank = ranks[0];
     for (let i = ranks.length - 1; i >= 0; i--) {
