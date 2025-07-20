@@ -1704,7 +1704,12 @@ class MyRPGLifeApp {
     const data = this.getLastDaysXP(this.chartRange);
     const rows = data
       .map((d, i) => {
-        const level = d.xp >= 15 ? 'high' : d.xp > 0 ? 'medium' : 'low';
+        let level = 'low';
+        if (d.xp >= 11) {
+          level = 'high';
+        } else if (d.xp >= 3) {
+          level = 'medium';
+        }
         return `<tr class="fade-in-up ${level}" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.xp}</td></tr>`;
       })
       .join('');
@@ -1729,7 +1734,14 @@ class MyRPGLifeApp {
     const data = this.getLastDaysFocus(this.chartRange);
     const rows = data
       .map((d, i) => {
-        const level = d.sessions > 2 ? 'high' : d.sessions > 0 ? 'medium' : 'low';
+        let level = 'focus-zero';
+        if (d.sessions >= 3) {
+          level = 'focus-many';
+        } else if (d.sessions === 2) {
+          level = 'focus-two';
+        } else if (d.sessions === 1) {
+          level = 'focus-one';
+        }
         return `<tr class="fade-in-up ${level}" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.sessions}</td></tr>`;
       })
       .join('');

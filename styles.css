@@ -8,6 +8,8 @@
   --secondary-color: #7c3aed;
   --accent-color: #f59e0b;
   --success-color: #10b981;
+  --success-color-dark: #065f46;
+  --success-color-bright: #4ade80;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
   --text-primary: #ffffff;
@@ -3217,6 +3219,21 @@ select:focus {
 .detail-table tbody tr.low td {
   background: rgba(239, 68, 68, 0.15);
   color: var(--error-color);
+}
+
+.detail-table tbody tr.focus-one td {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning-color);
+}
+
+.detail-table tbody tr.focus-two td {
+  background: rgba(6, 95, 70, 0.2);
+  color: var(--success-color-dark);
+}
+
+.detail-table tbody tr.focus-many td {
+  background: rgba(34, 197, 94, 0.25);
+  color: var(--success-color-bright);
 }
 
 .detail-table tbody tr:hover {
