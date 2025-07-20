@@ -8,6 +8,8 @@
   --secondary-color: #7c3aed;
   --accent-color: #f59e0b;
   --success-color: #10b981;
+  --success-color-dark: #065f46;
+  --success-color-bright: #4ade80;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
   --text-primary: #ffffff;
@@ -1504,6 +1506,12 @@ body {
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
 }
 
 .modal {
@@ -1514,15 +1522,26 @@ body {
   max-height: 80vh;
   overflow-y: auto;
   border: 1px solid var(--border-color);
-  animation: modalSlideIn 0.3s ease;
+  animation: modalPop 0.45s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-@keyframes modalSlideIn {
-  from {
+.modal.fullscreen {
+  max-width: none;
+  width: 95%;
+  max-height: none;
+  height: 90vh;
+}
+
+@keyframes modalPop {
+  0% {
     opacity: 0;
-    transform: translateY(-50px) scale(0.9);
+    transform: translateY(-50px) scale(0.8);
   }
-  to {
+  60% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.05);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
@@ -2278,6 +2297,17 @@ body {
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+.xp-chart,
+.focus-chart {
+  cursor: pointer;
 }
 
 .chart-container h4 {
@@ -3077,7 +3107,23 @@ select:focus {
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.6s ease forwards;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes chartFlash {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.flash {
+  animation: chartFlash 0.6s ease;
 }
 
 /* Loading States */
@@ -3128,4 +3174,68 @@ select:focus {
   filter: blur(3px);
   opacity: 0.4;
   transition: filter 0.3s, opacity 0.3s;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.detail-table th,
+.detail-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border: none;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.detail-table th {
+  background: var(--accent-bg);
+  color: var(--text-primary);
+}
+
+.detail-table tbody tr {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.detail-table tbody tr td {
+  background: var(--card-bg);
+}
+
+.detail-table tbody tr.high td {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+}
+
+.detail-table tbody tr.medium td {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning-color);
+}
+
+.detail-table tbody tr.low td {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error-color);
+}
+
+.detail-table tbody tr.focus-one td {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning-color);
+}
+
+.detail-table tbody tr.focus-two td {
+  background: rgba(6, 95, 70, 0.2);
+  color: var(--success-color-dark);
+}
+
+.detail-table tbody tr.focus-many td {
+  background: rgba(34, 197, 94, 0.25);
+  color: var(--success-color-bright);
+}
+
+.detail-table tbody tr:hover {
+  transform: translateX(5px);
 }
