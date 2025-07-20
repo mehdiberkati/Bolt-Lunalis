@@ -1547,14 +1547,14 @@ class MyRPGLifeApp {
         target: 50
       },
       {
-        id: 'rank_expert',
-        name: 'Expert Confirmé',
-        description: 'Atteignez le rang Expert (A)',
-        icon: '💎',
+        id: 'rank_sentinel',
+        name: 'Sentinelle Accomplie',
+        description: "Atteignez le rang S",
+        icon: '👑',
         xp: 50,
-        unlocked: this.data.totalXP >= 1000,
+        unlocked: this.data.totalXP >= 600,
         progress: this.data.totalXP,
-        target: 1000
+        target: 600
       }
     ];
     
@@ -1665,14 +1665,14 @@ class MyRPGLifeApp {
 
   renderRanksProgression() {
     const ranks = [
-      { name: 'Paumé', xp: 0, badge: 'E', avatar: '😵' },
-      { name: 'Apprenti', xp: 100, badge: 'D', avatar: '🎯' },
-      { name: 'Disciple', xp: 300, badge: 'C', avatar: '⚡' },
-      { name: 'Adepte', xp: 600, badge: 'B', avatar: '🔥' },
-      { name: 'Expert', xp: 1000, badge: 'A', avatar: '💎' },
-      { name: 'Virtuose', xp: 1500, badge: 'S', avatar: '👑' },
-      { name: 'Légende', xp: 2200, badge: 'SS', avatar: '🌟' },
-      { name: 'Élu du Destin', xp: 3000, badge: 'SSS', avatar: '🌙' }
+      { name: 'Paumé improductif', xp: 0, badge: 'E', avatar: '😵' },
+      { name: 'Le Spectateur de Sa Vie', xp: 200, badge: 'D', avatar: '🎯' },
+      { name: 'L\u2019Errant du Crépuscule', xp: 300, badge: 'C', avatar: '⚡' },
+      { name: 'Le Stratège Naissant', xp: 400, badge: 'B', avatar: '🔥' },
+      { name: 'Le Vétéran', xp: 500, badge: 'A', avatar: '💎' },
+      { name: 'Sentinelle de l\u2019Ascension', xp: 600, badge: 'S', avatar: '👑' },
+      { name: 'Le Paragon du Zénith', xp: 700, badge: 'SS', avatar: '🌟' },
+      { name: 'Élu du Destin', xp: 750, badge: 'SSS', avatar: '🌙' }
     ];
     
     return ranks.map(rank => {
@@ -1694,14 +1694,14 @@ class MyRPGLifeApp {
 
   renderRankProgressBar() {
     const ranks = [
-      { name: 'Paumé', xp: 0 },
-      { name: 'Apprenti', xp: 100 },
-      { name: 'Disciple', xp: 300 },
-      { name: 'Adepte', xp: 600 },
-      { name: 'Expert', xp: 1000 },
-      { name: 'Virtuose', xp: 1500 },
-      { name: 'Légende', xp: 2200 },
-      { name: 'Élu du Destin', xp: 3000 }
+      { name: 'Paumé improductif', xp: 0 },
+      { name: 'Le Spectateur de Sa Vie', xp: 200 },
+      { name: 'L\u2019Errant du Crépuscule', xp: 300 },
+      { name: 'Le Stratège Naissant', xp: 400 },
+      { name: 'Le Vétéran', xp: 500 },
+      { name: 'Sentinelle de l\u2019Ascension', xp: 600 },
+      { name: 'Le Paragon du Zénith', xp: 700 },
+      { name: 'Élu du Destin', xp: 750 }
     ];
 
     const current = this.getCurrentRank();
@@ -1744,14 +1744,14 @@ class MyRPGLifeApp {
 
   getCurrentRank() {
     const ranks = [
-      { name: 'Paumé', xp: 0, badge: 'E', avatar: '😵' },
-      { name: 'Apprenti', xp: 100, badge: 'D', avatar: '🎯' },
-      { name: 'Disciple', xp: 300, badge: 'C', avatar: '⚡' },
-      { name: 'Adepte', xp: 600, badge: 'B', avatar: '🔥' },
-      { name: 'Expert', xp: 1000, badge: 'A', avatar: '💎' },
-      { name: 'Virtuose', xp: 1500, badge: 'S', avatar: '👑' },
-      { name: 'Légende', xp: 2200, badge: 'SS', avatar: '🌟' },
-      { name: 'Élu du Destin', xp: 3000, badge: 'SSS', avatar: '🌙' }
+      { name: 'Paumé improductif', xp: 0, badge: 'E', avatar: '😵' },
+      { name: 'Le Spectateur de Sa Vie', xp: 200, badge: 'D', avatar: '🎯' },
+      { name: 'L\u2019Errant du Crépuscule', xp: 300, badge: 'C', avatar: '⚡' },
+      { name: 'Le Stratège Naissant', xp: 400, badge: 'B', avatar: '🔥' },
+      { name: 'Le Vétéran', xp: 500, badge: 'A', avatar: '💎' },
+      { name: 'Sentinelle de l\u2019Ascension', xp: 600, badge: 'S', avatar: '👑' },
+      { name: 'Le Paragon du Zénith', xp: 700, badge: 'SS', avatar: '🌟' },
+      { name: 'Élu du Destin', xp: 750, badge: 'SSS', avatar: '🌙' }
     ];
     
     let currentRank = ranks[0];
@@ -1875,21 +1875,31 @@ class MyRPGLifeApp {
       challengeFill.style.width = `${progress}%`;
       challengeStatus.textContent = `${this.data.dailyXP}/15 XP`;
     }
-    
+
+    // Update season goal progress toward rank S
+    const seasonFill = document.getElementById('seasonGoalFill');
+    const seasonText = document.getElementById('seasonGoalText');
+    if (seasonFill && seasonText) {
+      const target = 600;
+      const percent = Math.min(100, (this.data.totalXP / target) * 100);
+      seasonFill.style.width = `${percent}%`;
+      seasonText.textContent = `${this.data.totalXP} / ${target} XP`;
+    }
+
     // Update rank info
     this.updateRankDisplay();
   }
 
   updateRankDisplay() {
     const ranks = [
-      { name: 'Paumé', xp: 0, badge: 'E', avatar: '😵' },
-      { name: 'Apprenti', xp: 100, badge: 'D', avatar: '🎯' },
-      { name: 'Disciple', xp: 300, badge: 'C', avatar: '⚡' },
-      { name: 'Adepte', xp: 600, badge: 'B', avatar: '🔥' },
-      { name: 'Expert', xp: 1000, badge: 'A', avatar: '💎' },
-      { name: 'Virtuose', xp: 1500, badge: 'S', avatar: '👑' },
-      { name: 'Légende', xp: 2200, badge: 'SS', avatar: '🌟' },
-      { name: 'Élu du Destin', xp: 3000, badge: 'SSS', avatar: '🌙' }
+      { name: 'Paumé improductif', xp: 0, badge: 'E', avatar: '😵' },
+      { name: 'Le Spectateur de Sa Vie', xp: 200, badge: 'D', avatar: '🎯' },
+      { name: 'L\u2019Errant du Crépuscule', xp: 300, badge: 'C', avatar: '⚡' },
+      { name: 'Le Stratège Naissant', xp: 400, badge: 'B', avatar: '🔥' },
+      { name: 'Le Vétéran', xp: 500, badge: 'A', avatar: '💎' },
+      { name: 'Sentinelle de l\u2019Ascension', xp: 600, badge: 'S', avatar: '👑' },
+      { name: 'Le Paragon du Zénith', xp: 700, badge: 'SS', avatar: '🌟' },
+      { name: 'Élu du Destin', xp: 750, badge: 'SSS', avatar: '🌙' }
     ];
     
     let currentRank = ranks[0];
