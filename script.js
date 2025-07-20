@@ -2101,13 +2101,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   const form = document.getElementById('loginForm');
   const signupBtn = document.getElementById('signupBtn');
 
-  // Tente de récupérer la session existante
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
+  async function startApp(user) {
     const serverData = await fetchUserData(user.id);
     window.app = new MyRPGLifeApp(serverData || null, user);
     loginContainer.style.display = 'none';
     appContainer.style.display = 'flex';
+  }
+
+  // Vérifie s'il existe une session stockée en local
+  const storedSession = localStorage.getItem('supabaseSession');
+  if (storedSession) {
+    try {
+      const session = JSON.parse(storedSession);
+      const { data, error } = await supabase.auth.setSession(session);
+      if (!error && data.session?.user) {
+        await startApp(data.session.user);
+        return;
+      }
+      if (error) console.error('Session error:', error);
+    } catch (err) {
+      console.error('Failed to restore session:', err);
+    }
+    // Si la restauration échoue, on nettoie le stockage
+    localStorage.removeItem('supabaseSession');
   }
 
   form.addEventListener('submit', async (e) => {
@@ -2119,10 +2135,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       alert(error.message);
       return;
     }
-    const userData = await fetchUserData(data.user.id);
-    loginContainer.style.display = 'none';
-    appContainer.style.display = 'flex';
-    window.app = new MyRPGLifeApp(userData || null, data.user);
+    localStorage.setItem('supabaseSession', JSON.stringify(data.session));
+    await startApp(data.user);
   });
 
   signupBtn.addEventListener('click', async (e) => {
@@ -2133,7 +2147,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (error) {
       alert(error.message);
     } else {
-      alert('Inscription réussie ! Vérifiez vos emails puis connectez-vous.');
+      alert('Inscription réussie ! Vérifiez vos emails pour confirmer puis connectez-vous.');
     }
   });
 });
