@@ -36,7 +36,7 @@ Application immersive de gamification pour booster la productivité et la discip
 
 ### 🏆 Système de Rangs
 
-- **8 rangs**: E (Paumé) → SSS (Élu du Destin)
+- **8 rangs**: E (Paumé improductif) → SSS (Élu du Destin)
 - Avatars et interface évolutifs
 - Badges et titres personnalisés
 - Couleurs thématiques par rang
@@ -109,14 +109,14 @@ Application immersive de gamification pour booster la productivité et la discip
 
 ### Rangs et XP Requis
 
-- **E - Paumé**: 0 XP
-- **D - Apprenti**: 100 XP
-- **C - Disciple**: 300 XP
-- **B - Adepte**: 600 XP
-- **A - Expert**: 1000 XP
-- **S - Virtuose**: 1500 XP
-- **SS - Légende**: 2200 XP
-- **SSS - Élu du Destin**: 3000 XP
+- **E - Paumé improductif**: < 200 XP
+- **D - Le Spectateur de Sa Vie**: 200 XP
+- **C - L’Errant du Crépuscule**: 300 XP
+- **B - Le Stratège Naissant**: 400 XP
+- **A - Le Vétéran**: 500 XP
+- **S - Sentinelle de l'Ascension**: 600 XP
+- **SS - Le Paragon du Zénith**: 700 XP
+- **SSS - Élu du Destin**: ≥ 750 XP
 
 ### Taux d'Intensité
 
