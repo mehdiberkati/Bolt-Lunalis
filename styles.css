@@ -1517,6 +1517,13 @@ body {
   animation: modalSlideIn 0.3s ease;
 }
 
+.modal.fullscreen {
+  max-width: none;
+  width: 95%;
+  max-height: none;
+  height: 90vh;
+}
+
 @keyframes modalSlideIn {
   from {
     opacity: 0;
@@ -2278,6 +2285,11 @@ body {
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid var(--border-color);
+}
+
+.xp-chart,
+.focus-chart {
+  cursor: pointer;
 }
 
 .chart-container h4 {
@@ -3128,4 +3140,21 @@ select:focus {
   filter: blur(3px);
   opacity: 0.4;
   transition: filter 0.3s, opacity 0.3s;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detail-table th,
+.detail-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.detail-table th {
+  background: var(--accent-bg);
+  color: var(--text-primary);
 }

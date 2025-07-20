@@ -812,20 +812,29 @@ class MyRPGLifeApp {
   }
 
   // Modal functions
-  showModal(content) {
+  showModal(content, fullscreen = false) {
     const modal = document.getElementById('modal');
     const modalOverlay = document.getElementById('modalOverlay');
-    
+
     if (modal && modalOverlay) {
       modal.innerHTML = content;
+      if (fullscreen) {
+        modal.classList.add('fullscreen');
+      } else {
+        modal.classList.remove('fullscreen');
+      }
       modalOverlay.style.display = 'flex';
     }
   }
 
   closeModal() {
     const modalOverlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById('modal');
     if (modalOverlay) {
       modalOverlay.style.display = 'none';
+    }
+    if (modal) {
+      modal.classList.remove('fullscreen');
     }
   }
 
@@ -1108,6 +1117,16 @@ class MyRPGLifeApp {
         this.data.settings.chartRange = this.chartRange;
         this.renderProgression();
       });
+    }
+
+    const xpChart = document.querySelector('.xp-chart');
+    if (xpChart) {
+      xpChart.addEventListener('click', () => this.showXPDetails());
+    }
+
+    const focusChart = document.querySelector('.focus-chart');
+    if (focusChart) {
+      focusChart.addEventListener('click', () => this.showFocusDetails());
     }
   }
 
@@ -1633,7 +1652,8 @@ class MyRPGLifeApp {
 
       days.push({
         day: dayName,
-        xp: dayXP
+        xp: dayXP,
+        date: date.toLocaleDateString('fr-FR')
       });
     }
 
@@ -1656,11 +1676,56 @@ class MyRPGLifeApp {
 
       days.push({
         day: dayName,
-        sessions: todaySessions
+        sessions: todaySessions,
+        date: date.toLocaleDateString('fr-FR')
       });
     }
 
     return days;
+  }
+
+  showXPDetails() {
+    const data = this.getLastDaysXP(this.chartRange);
+    const rows = data
+      .map(d => `<tr><td>${d.date}</td><td>${d.xp}</td></tr>`)
+      .join('');
+    const modalContent = `
+      <div class="modal-header">
+        <h3>Détails XP (${this.chartRange} jours)</h3>
+        <button class="modal-close" onclick="app.closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <table class="detail-table">
+          <thead><tr><th>Date</th><th>XP</th></tr></thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </div>
+    `;
+    this.showModal(modalContent, true);
+  }
+
+  showFocusDetails() {
+    const data = this.getLastDaysFocus(this.chartRange);
+    const rows = data
+      .map(d => `<tr><td>${d.date}</td><td>${d.sessions}</td></tr>`)
+      .join('');
+    const modalContent = `
+      <div class="modal-header">
+        <h3>Détails Focus (${this.chartRange} jours)</h3>
+        <button class="modal-close" onclick="app.closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <table class="detail-table">
+          <thead><tr><th>Date</th><th>Sessions</th></tr></thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </div>
+    `;
+    this.showModal(modalContent, true);
   }
 
   renderRanksProgression() {
