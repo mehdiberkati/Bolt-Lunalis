@@ -2295,6 +2295,12 @@ body {
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
 }
 
 .xp-chart,
@@ -3099,7 +3105,23 @@ select:focus {
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.6s ease forwards;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes chartFlash {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.flash {
+  animation: chartFlash 0.6s ease;
 }
 
 /* Loading States */
@@ -3154,15 +3176,16 @@ select:focus {
 
 .detail-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
   font-size: 0.95rem;
 }
 
 .detail-table th,
 .detail-table td {
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
   text-align: left;
+  border: none;
   transition: background 0.3s, transform 0.3s;
 }
 
@@ -3171,11 +3194,31 @@ select:focus {
   color: var(--text-primary);
 }
 
-.detail-table tbody tr:nth-child(odd) {
-  background: var(--secondary-bg);
+.detail-table tbody tr {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.detail-table tbody tr td {
+  background: var(--card-bg);
+}
+
+.detail-table tbody tr.high td {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+}
+
+.detail-table tbody tr.medium td {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning-color);
+}
+
+.detail-table tbody tr.low td {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error-color);
 }
 
 .detail-table tbody tr:hover {
-  background: var(--accent-bg);
   transform: translateX(5px);
 }

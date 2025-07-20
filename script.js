@@ -842,6 +842,12 @@ class MyRPGLifeApp {
     }
   }
 
+  flashElement(el) {
+    if (!el) return;
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 600);
+  }
+
   // Notification system
   showNotification(message, type = 'info') {
     const container = document.getElementById('notifications');
@@ -1125,12 +1131,18 @@ class MyRPGLifeApp {
 
     const xpChart = document.querySelector('.xp-chart');
     if (xpChart) {
-      xpChart.addEventListener('click', () => this.showXPDetails());
+      xpChart.addEventListener('click', () => {
+        this.flashElement(xpChart);
+        this.showXPDetails();
+      });
     }
 
     const focusChart = document.querySelector('.focus-chart');
     if (focusChart) {
-      focusChart.addEventListener('click', () => this.showFocusDetails());
+      focusChart.addEventListener('click', () => {
+        this.flashElement(focusChart);
+        this.showFocusDetails();
+      });
     }
   }
 
@@ -1691,9 +1703,10 @@ class MyRPGLifeApp {
   showXPDetails() {
     const data = this.getLastDaysXP(this.chartRange);
     const rows = data
-      .map((d, i) =>
-        `<tr class="fade-in-up" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.xp}</td></tr>`
-      )
+      .map((d, i) => {
+        const level = d.xp >= 15 ? 'high' : d.xp > 0 ? 'medium' : 'low';
+        return `<tr class="fade-in-up ${level}" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.xp}</td></tr>`;
+      })
       .join('');
     const modalContent = `
       <div class="modal-header">
@@ -1715,9 +1728,10 @@ class MyRPGLifeApp {
   showFocusDetails() {
     const data = this.getLastDaysFocus(this.chartRange);
     const rows = data
-      .map((d, i) =>
-        `<tr class="fade-in-up" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.sessions}</td></tr>`
-      )
+      .map((d, i) => {
+        const level = d.sessions > 2 ? 'high' : d.sessions > 0 ? 'medium' : 'low';
+        return `<tr class="fade-in-up ${level}" style="animation-delay:${i * 0.05}s"><td>${d.date}</td><td>${d.sessions}</td></tr>`;
+      })
       .join('');
     const modalContent = `
       <div class="modal-header">
