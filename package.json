@@ -8,12 +8,14 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "start": "electron ."
+    "start": "electron .",
+    "package-win": "electron-packager . Lunalis --platform=win32 --arch=x64 --out=release --overwrite"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "electron-packager": "^17.1.2",
     "eslint": "^9.31.0",
     "globals": "^16.3.0",
     "jest": "^30.0.4",

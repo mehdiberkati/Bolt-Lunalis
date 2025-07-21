@@ -167,6 +167,13 @@ Application immersive de gamification pour booster la productivité et la discip
    });
    ```
 
+### Créer l'exécutable Windows
+
+1. Assurez-vous d'avoir installé les dépendances avec `npm install`.
+2. Générez l'application avec `npm run package-win`.
+3. L'exécutable se trouve dans `release/Lunalis-win32-x64/Lunalis.exe`.
+   Vous pouvez le lancer directement sans passer par `npm start`.
+
 ## 🎯 Objectifs de Performance
 
 - Score ≥ 750 XP par saison
