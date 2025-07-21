@@ -2045,6 +2045,17 @@ body {
 .achievements-container {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  animation: fadeInUp 0.6s ease;
+}
+
+.achievements-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(79, 172, 254, 0.15), transparent 70%);
+  animation: rotateGlowBg 12s linear infinite;
+  z-index: -1;
 }
 
 .achievements-container h2 {
@@ -2102,6 +2113,18 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
+}
+
+.achievement-group-title {
+  margin: 2rem 0 1rem;
+  text-align: center;
+  font-family: 'Orbitron', monospace;
+  font-size: 1.8rem;
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease infinite;
 }
 
 .achievement-card {
@@ -3274,25 +3297,24 @@ select:focus {
 }
 
 /* Achievement Tiers */
+.achievement-card.tier-easy {
+  border-color: var(--success-color-bright);
+}
+
 .achievement-card.tier-medium {
   border-color: #3b82f6;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
 
-.achievement-card.tier-premium {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
-  animation: glowPulse 3s infinite ease-in-out;
-}
-
-.achievement-card.tier-prestigious {
-  border-color: #f59e0b;
+.achievement-card.tier-hard {
+  border-color: var(--accent-color);
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.6);
+  animation: glowPulse 3s infinite ease-in-out;
   position: relative;
   overflow: hidden;
 }
 
-.achievement-card.tier-prestigious::after {
+.achievement-card.tier-hard::after {
   content: '';
   position: absolute;
   inset: -50%;
@@ -3316,4 +3338,9 @@ select:focus {
   to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes rotateGlowBg {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
