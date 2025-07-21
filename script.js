@@ -141,6 +141,7 @@ class MyRPGLifeApp {
         this.renderProjects();
         break;
       case 'achievements':
+        this.resetAchievementsAnimation();
         this.renderAchievements();
         break;
       case 'progression':
@@ -988,6 +989,18 @@ class MyRPGLifeApp {
     const achievements = this.getAchievements();
     const unlockedCount = achievements.filter(a => a.unlocked).length;
 
+    const tiers = {
+      'tier-easy': 'Facile',
+      'tier-medium': 'Moyen',
+      'tier-epic': 'Épique',
+      'tier-legendary': 'Légendaire'
+    };
+
+    const grouped = Object.keys(tiers).reduce((acc, key) => {
+      acc[key] = achievements.filter(a => a.tier === key);
+      return acc;
+    }, {});
+
     achievementsContent.innerHTML = `
       <div class="achievements-header">
         <div class="achievements-stats">
@@ -1003,25 +1016,36 @@ class MyRPGLifeApp {
           </div>
         </div>
       </div>
-      
-      <div class="achievements-grid">
-        ${achievements.map(achievement => `
-          <div class="achievement-card ${achievement.tier} ${achievement.unlocked ? 'unlocked' : 'locked'}">
-            <div class="achievement-icon">${achievement.icon}</div>
-            <div class="achievement-info">
-              <h4>${achievement.name}</h4>
-              <p>${achievement.description}</p>
-              <div class="achievement-reward">+${achievement.xp} XP</div>
-              ${achievement.unlocked ? 
-                `<div class="achievement-date">Débloqué le ${new Date(achievement.unlockedAt).toLocaleDateString()}</div>` :
-                `<div class="achievement-progress-text">${achievement.progress || '0'}/${achievement.target || '?'}</div>`
-              }
+      ${Object.keys(tiers).map(tier => `
+        <h3 class="achievement-group-title">${tiers[tier]}</h3>
+        <div class="achievements-grid">
+          ${grouped[tier].map(achievement => `
+            <div class="achievement-card ${tier} ${achievement.unlocked ? 'unlocked' : 'locked'}">
+              <div class="achievement-icon">${achievement.icon}</div>
+              <div class="achievement-info">
+                <h4>${achievement.name}</h4>
+                <p>${achievement.description}</p>
+                <div class="achievement-reward">+${achievement.xp} XP</div>
+                ${achievement.unlocked ?
+                  `<div class="achievement-date">Débloqué le ${new Date(achievement.unlockedAt).toLocaleDateString()}</div>` :
+                  `<div class="achievement-progress-text">${achievement.progress || '0'}/${achievement.target || '?'}</div>`
+                }
+              </div>
+              ${achievement.unlocked ? '<div class="achievement-badge">✓</div>' : ''}
             </div>
-            ${achievement.unlocked ? '<div class="achievement-badge">✓</div>' : ''}
-          </div>
-        `).join('')}
-      </div>
+          `).join('')}
+        </div>
+      `).join('')}
     `;
+  }
+
+  resetAchievementsAnimation() {
+    const container = document.querySelector('#achievements .achievements-container');
+    if (container) {
+      container.classList.remove('fade-in-up');
+      void container.offsetWidth;
+      container.classList.add('fade-in-up');
+    }
   }
 
   renderProgression() {
@@ -1563,7 +1587,7 @@ class MyRPGLifeApp {
         description: 'Complétez votre première session de focus',
         icon: '🎯',
         xp: 10,
-        tier: 'basic',
+        tier: 'tier-easy',
         unlocked: this.data.focusSessions.length > 0,
         unlockedAt: this.data.focusSessions[0]?.date
       },
@@ -1573,7 +1597,7 @@ class MyRPGLifeApp {
         description: 'Atteignez 15 XP en une journée',
         icon: '⚡',
         xp: 15,
-        tier: 'basic',
+        tier: 'tier-easy',
         unlocked: this.data.dailyXP >= 15,
         progress: this.data.dailyXP,
         target: 15
@@ -1584,7 +1608,7 @@ class MyRPGLifeApp {
         description: '10 sessions de focus',
         icon: '🏹',
         xp: 25,
-        tier: 'medium',
+        tier: 'tier-medium',
         unlocked: this.data.focusSessions.length >= 10,
         progress: this.data.focusSessions.length,
         target: 10
@@ -1595,7 +1619,7 @@ class MyRPGLifeApp {
         description: '7 jours consécutifs à 15+ XP',
         icon: '⚔️',
         xp: 50,
-        tier: 'medium',
+        tier: 'tier-medium',
         unlocked: this.calculateStreak() >= 7,
         progress: this.calculateStreak(),
         target: 7
@@ -1606,7 +1630,7 @@ class MyRPGLifeApp {
         description: '7 jours consécutifs de sport',
         icon: '🏃',
         xp: 30,
-        tier: 'medium',
+        tier: 'tier-medium',
         unlocked: this.getSportStreak() >= 7,
         progress: this.getSportStreak(),
         target: 7
@@ -1617,7 +1641,7 @@ class MyRPGLifeApp {
         description: "Réaliser 3 jours d\u2019affilée avec les 2 blocs obligatoires",
         icon: '🛡️',
         xp: 25,
-        tier: 'medium',
+        tier: 'tier-medium',
         unlocked: this.getBlocksStreak() >= 3,
         progress: this.getBlocksStreak(),
         target: 3
@@ -1628,7 +1652,7 @@ class MyRPGLifeApp {
         description: '50 sessions de focus',
         icon: '🧘',
         xp: 100,
-        tier: 'premium',
+        tier: 'tier-epic',
         unlocked: this.data.focusSessions.length >= 50,
         progress: this.data.focusSessions.length,
         target: 50
@@ -1639,7 +1663,7 @@ class MyRPGLifeApp {
         description: 'Atteindre 1000 XP total',
         icon: '💠',
         xp: 150,
-        tier: 'premium',
+        tier: 'tier-legendary',
         unlocked: this.data.totalXP >= 1000,
         progress: this.data.totalXP,
         target: 1000
@@ -1650,7 +1674,7 @@ class MyRPGLifeApp {
         description: '4h de focus en une journée',
         icon: '🏅',
         xp: 200,
-        tier: 'premium',
+        tier: 'tier-epic',
         unlocked: this.getMaxDailyFocus() >= 240,
         progress: this.getMaxDailyFocus(),
         target: 240
@@ -1661,7 +1685,7 @@ class MyRPGLifeApp {
         description: "Atteignez le rang S",
         icon: '👑',
         xp: 50,
-        tier: 'premium',
+        tier: 'tier-epic',
         unlocked: this.data.totalXP >= 600,
         progress: this.data.totalXP,
         target: 600
@@ -1672,19 +1696,19 @@ class MyRPGLifeApp {
         description: '100 sessions de focus',
         icon: '🌠',
         xp: 300,
-        tier: 'prestigious',
+        tier: 'tier-legendary',
         unlocked: this.data.focusSessions.length >= 100,
         progress: this.data.focusSessions.length,
         target: 100
       },
       {
-        id: 'season_champion',
-        name: 'Champion de Saison',
-        description: 'Terminer une saison avec rang S+',
+        id: 'chosen_one',
+        name: "L'Élu",
+        description: 'Finir la saison avec le rang SSS',
         icon: '🏆',
-        xp: 500,
-        tier: 'prestigious',
-        unlocked: this.hasSeasonRankSPlus(),
+        xp: 1000,
+        tier: 'tier-legendary',
+        unlocked: this.hasSeasonRankSSS(),
         progress: this.data.totalXP,
         target: null
       }
@@ -2234,7 +2258,7 @@ class MyRPGLifeApp {
     return values.length ? Math.max(...values) : 0;
   }
 
-  hasSeasonRankSPlus() {
+  hasSeasonRankSSS() {
     return this.data.totalXP >= 750;
   }
 
