@@ -15,6 +15,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -23,6 +24,7 @@ function createWindow() {
   });
 
   win.loadFile('index.html');
+  win.setMenuBarVisibility(false);
 }
 
 function getOAuthClient() {
