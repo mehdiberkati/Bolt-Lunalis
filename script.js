@@ -24,7 +24,7 @@ class MyRPGLifeApp {
 
     this.init();
 
-    if (!this.data.started) {
+    if (!this.data.started && this.data.totalXP === 0) {
       this.showStartOverlay();
     }
   }
@@ -2313,12 +2313,16 @@ class MyRPGLifeApp {
       const saved = localStorage.getItem('myRPGLifeData');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return {
+        const data = {
           ...defaultData,
           ...parsed,
           settings: { ...defaultData.settings, ...(parsed.settings || {}) },
           lastDailyReset: parsed.lastDailyReset || defaultData.lastDailyReset
         };
+        if (parsed.started === undefined) {
+          data.started = (parsed.totalXP > 0) || (parsed.seasonHistory && parsed.seasonHistory.length > 0);
+        }
+        return data;
       }
       return defaultData;
     } catch (error) {
