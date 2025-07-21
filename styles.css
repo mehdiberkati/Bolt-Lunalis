@@ -119,6 +119,26 @@ body {
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
+.nav-btn[data-section="achievements"] {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn[data-section="achievements"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: skewX(-20deg);
+}
+
+.nav-btn[data-section="achievements"]:hover::after {
+  animation: shine 0.8s forwards;
+}
+
 .nav-icon {
   font-size: 1.2rem;
   width: 24px;
@@ -2046,14 +2066,13 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
-  animation: fadeInUp 0.6s ease;
 }
 
 .achievements-container::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(79, 172, 254, 0.15), transparent 70%);
+  background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.15), transparent 70%);
   animation: rotateGlowBg 12s linear infinite;
   z-index: -1;
 }
@@ -2092,11 +2111,13 @@ body {
   font-weight: bold;
   color: var(--primary-color);
   font-family: 'Orbitron', monospace;
+  animation: flash 1.2s steps(2, start) infinite;
 }
 
 .counter-total {
   font-size: 1.5rem;
   color: var(--text-secondary);
+  animation: flash 1.2s steps(2, start) infinite;
 }
 
 .counter-label {
@@ -3324,10 +3345,10 @@ select:focus {
 
 @keyframes glowPulse {
   from {
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
   }
   to {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 1);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 1);
   }
 }
 
@@ -3343,4 +3364,14 @@ select:focus {
 @keyframes rotateGlowBg {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes shine {
+  from { left: -100%; }
+  to { left: 200%; }
 }

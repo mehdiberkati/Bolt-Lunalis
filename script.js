@@ -141,6 +141,7 @@ class MyRPGLifeApp {
         this.renderProjects();
         break;
       case 'achievements':
+        this.resetAchievementsAnimation();
         this.renderAchievements();
         break;
       case 'progression':
@@ -1035,6 +1036,15 @@ class MyRPGLifeApp {
         </div>
       `).join('')}
     `;
+  }
+
+  resetAchievementsAnimation() {
+    const container = document.querySelector('#achievements .achievements-container');
+    if (container) {
+      container.classList.remove('fade-in-up');
+      void container.offsetWidth;
+      container.classList.add('fade-in-up');
+    }
   }
 
   renderProgression() {
