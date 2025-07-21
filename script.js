@@ -991,8 +991,9 @@ class MyRPGLifeApp {
 
     const tiers = {
       'tier-easy': 'Facile',
-      'tier-medium': 'Intermédiaire',
-      'tier-hard': 'Difficile'
+      'tier-medium': 'Moyen',
+      'tier-epic': 'Épique',
+      'tier-legendary': 'Légendaire'
     };
 
     const grouped = Object.keys(tiers).reduce((acc, key) => {
@@ -1651,7 +1652,7 @@ class MyRPGLifeApp {
         description: '50 sessions de focus',
         icon: '🧘',
         xp: 100,
-        tier: 'tier-hard',
+        tier: 'tier-epic',
         unlocked: this.data.focusSessions.length >= 50,
         progress: this.data.focusSessions.length,
         target: 50
@@ -1662,7 +1663,7 @@ class MyRPGLifeApp {
         description: 'Atteindre 1000 XP total',
         icon: '💠',
         xp: 150,
-        tier: 'tier-hard',
+        tier: 'tier-legendary',
         unlocked: this.data.totalXP >= 1000,
         progress: this.data.totalXP,
         target: 1000
@@ -1673,7 +1674,7 @@ class MyRPGLifeApp {
         description: '4h de focus en une journée',
         icon: '🏅',
         xp: 200,
-        tier: 'tier-hard',
+        tier: 'tier-epic',
         unlocked: this.getMaxDailyFocus() >= 240,
         progress: this.getMaxDailyFocus(),
         target: 240
@@ -1684,7 +1685,7 @@ class MyRPGLifeApp {
         description: "Atteignez le rang S",
         icon: '👑',
         xp: 50,
-        tier: 'tier-hard',
+        tier: 'tier-epic',
         unlocked: this.data.totalXP >= 600,
         progress: this.data.totalXP,
         target: 600
@@ -1695,19 +1696,19 @@ class MyRPGLifeApp {
         description: '100 sessions de focus',
         icon: '🌠',
         xp: 300,
-        tier: 'tier-hard',
+        tier: 'tier-legendary',
         unlocked: this.data.focusSessions.length >= 100,
         progress: this.data.focusSessions.length,
         target: 100
       },
       {
-        id: 'season_champion',
-        name: 'Champion de Saison',
-        description: 'Terminer une saison avec rang S+',
+        id: 'chosen_one',
+        name: "L'Élu",
+        description: 'Finir la saison avec le rang SSS',
         icon: '🏆',
-        xp: 500,
-        tier: 'tier-hard',
-        unlocked: this.hasSeasonRankSPlus(),
+        xp: 1000,
+        tier: 'tier-legendary',
+        unlocked: this.hasSeasonRankSSS(),
         progress: this.data.totalXP,
         target: null
       }
@@ -2257,7 +2258,7 @@ class MyRPGLifeApp {
     return values.length ? Math.max(...values) : 0;
   }
 
-  hasSeasonRankSPlus() {
+  hasSeasonRankSSS() {
     return this.data.totalXP >= 750;
   }
 

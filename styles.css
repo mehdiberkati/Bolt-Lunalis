@@ -133,10 +133,8 @@ body {
   height: 100%;
   background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
   transform: skewX(-20deg);
-}
-
-.nav-btn[data-section="achievements"]:hover::after {
-  animation: shine 0.8s forwards;
+  pointer-events: none;
+  animation: shine 3s linear infinite;
 }
 
 .nav-icon {
@@ -2071,9 +2069,11 @@ body {
 .achievements-container::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.15), transparent 70%);
+  inset: -20%;
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
   animation: rotateGlowBg 12s linear infinite;
+  border-radius: 50%;
+  filter: blur(40px);
   z-index: -1;
 }
 
@@ -2111,13 +2111,13 @@ body {
   font-weight: bold;
   color: var(--primary-color);
   font-family: 'Orbitron', monospace;
-  animation: flash 1.2s steps(2, start) infinite;
+  animation: subtleFlash 3s ease-in-out infinite;
 }
 
 .counter-total {
   font-size: 1.5rem;
   color: var(--text-secondary);
-  animation: flash 1.2s steps(2, start) infinite;
+  animation: subtleFlash 3s ease-in-out infinite;
 }
 
 .counter-label {
@@ -3327,15 +3327,20 @@ select:focus {
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
 
-.achievement-card.tier-hard {
+.achievement-card.tier-epic {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+}
+
+.achievement-card.tier-legendary {
   border-color: var(--accent-color);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.6);
-  animation: glowPulse 3s infinite ease-in-out;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.6);
+  animation: glowPulse 3s ease-in-out infinite;
   position: relative;
   overflow: hidden;
 }
 
-.achievement-card.tier-hard::after {
+.achievement-card.tier-legendary::after {
   content: '';
   position: absolute;
   inset: -50%;
@@ -3344,10 +3349,10 @@ select:focus {
 }
 
 @keyframes glowPulse {
-  from {
+  0%, 100% {
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
   }
-  to {
+  50% {
     box-shadow: 0 0 20px rgba(245, 158, 11, 1);
   }
 }
@@ -3366,9 +3371,13 @@ select:focus {
   to { transform: rotate(360deg); }
 }
 
-@keyframes flash {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+@keyframes subtleFlash {
+  0%, 100% {
+    text-shadow: 0 0 0 rgba(59, 130, 246, 0);
+  }
+  50% {
+    text-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
+  }
 }
 
 @keyframes shine {
