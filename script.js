@@ -21,13 +21,18 @@ class MyRPGLifeApp {
 
     // Project editing state
     this.editingProjectId = null;
-    
+
     this.init();
+
+    if (!this.data.started) {
+      this.showStartOverlay();
+    }
   }
 
   init() {
     this.setupEventListeners();
     this.checkDailyReset();
+    this.checkSeasonReset();
     this.updateUI();
     this.updateFocusStats();
     this.startWeeklyCountdown();
@@ -109,6 +114,11 @@ class MyRPGLifeApp {
           this.closeModal();
         }
       });
+    }
+
+    const startAdventureBtn = document.getElementById('startAdventureBtn');
+    if (startAdventureBtn) {
+      startAdventureBtn.addEventListener('click', () => this.startApp());
     }
   }
 
@@ -2064,14 +2074,21 @@ class MyRPGLifeApp {
   }
 
   resetAllData() {
-    if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes vos données ? Cette action est irréversible.')) {
-      localStorage.removeItem('myRPGLifeData');
-      location.reload();
+    if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes vos données ? Cette action est irréversible.")) {
+      const achievements = this.data.achievements;
+      const settings = this.data.settings;
+      this.data = this.getDefaultData();
+      this.data.achievements = achievements;
+      this.data.settings = settings;
+      this.saveData();
+      this.showStartOverlay();
+      this.updateUI();
     }
   }
 
   // UI Updates
   updateUI() {
+    this.checkSeasonReset();
     this.updateDashboard();
     this.updateTimerDisplay();
     this.updateBreakInfo();
@@ -2105,6 +2122,9 @@ class MyRPGLifeApp {
       seasonFill.style.width = `${percent}%`;
       seasonText.textContent = `${this.data.totalXP} / ${target} XP`;
     }
+
+    this.updateSeasonDisplay();
+    this.updateLastSeasonDisplay();
 
     // Update rank info
     this.updateRankDisplay();
@@ -2263,8 +2283,12 @@ class MyRPGLifeApp {
   }
 
   // Data management
-  loadData() {
-    const defaultData = {
+  getDefaultData() {
+    return {
+      started: false,
+      seasonNumber: 1,
+      seasonStartDate: null,
+      seasonHistory: [],
       totalXP: 0,
       dailyXP: 0,
       lastDailyReset: new Date().toDateString(),
@@ -2280,6 +2304,10 @@ class MyRPGLifeApp {
         chartRange: 7
       }
     };
+  }
+
+  loadData() {
+    const defaultData = this.getDefaultData();
     
     try {
       const saved = localStorage.getItem('myRPGLifeData');
@@ -2354,6 +2382,91 @@ class MyRPGLifeApp {
     // Set up tomorrow's challenge
     this.data.doubleOrNothingActive = true;
     this.showNotification('🔥 Défi accepté ! Bonne chance demain !', 'warning');
+  }
+
+  showStartOverlay() {
+    const overlay = document.getElementById('startOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  }
+
+  hideStartOverlay() {
+    const overlay = document.getElementById('startOverlay');
+    if (overlay) overlay.classList.add('fade-out');
+    setTimeout(() => {
+      if (overlay) overlay.style.display = 'none';
+      if (overlay) overlay.classList.remove('fade-out');
+    }, 500);
+  }
+
+  startApp() {
+    this.data.started = true;
+    this.data.seasonNumber = this.data.seasonHistory.length + 1;
+    this.data.seasonStartDate = new Date().toISOString();
+    this.saveData();
+    this.hideStartOverlay();
+    this.updateUI();
+  }
+
+  checkSeasonReset() {
+    if (!this.data.seasonStartDate) return;
+    const start = new Date(this.data.seasonStartDate);
+    const diffDays = Math.floor((Date.now() - start) / (1000 * 60 * 60 * 24));
+    if (diffDays >= 42) {
+      this.startNewSeason();
+    }
+  }
+
+  startNewSeason() {
+    const currentRank = this.getCurrentRank();
+    this.data.seasonHistory.push({
+      season: this.data.seasonNumber,
+      totalXP: this.data.totalXP,
+      rank: currentRank.name,
+      badge: currentRank.badge,
+    });
+
+    const achievements = this.data.achievements;
+    const settings = this.data.settings;
+    const seasonHistory = this.data.seasonHistory;
+
+    this.data = this.getDefaultData();
+    this.data.started = true;
+    this.data.seasonNumber = seasonHistory.length + 1;
+    this.data.seasonStartDate = new Date().toISOString();
+    this.data.achievements = achievements;
+    this.data.settings = settings;
+    this.data.seasonHistory = seasonHistory;
+    this.saveData();
+    this.updateUI();
+  }
+
+  updateSeasonDisplay() {
+    const seasonEl = document.getElementById('currentSeason');
+    const weekEl = document.getElementById('currentWeek');
+    const daysEl = document.getElementById('daysRemaining');
+
+    if (!this.data.seasonStartDate) return;
+    const start = new Date(this.data.seasonStartDate);
+    const diffDays = Math.floor((Date.now() - start) / (1000 * 60 * 60 * 24));
+    const week = Math.floor(diffDays / 7) + 1;
+    const remaining = Math.max(0, 42 - diffDays);
+
+    if (seasonEl) seasonEl.textContent = this.data.seasonNumber;
+    if (weekEl) weekEl.textContent = Math.min(6, week);
+    if (daysEl) daysEl.textContent = remaining;
+  }
+
+  updateLastSeasonDisplay() {
+    const card = document.getElementById('lastSeasonCard');
+    const rankEl = document.getElementById('lastSeasonRank');
+    if (!card || !rankEl) return;
+    if (this.data.seasonHistory.length > 0) {
+      const last = this.data.seasonHistory[this.data.seasonHistory.length - 1];
+      card.style.display = 'block';
+      rankEl.textContent = `${last.badge} - ${last.rank}`;
+    } else {
+      card.style.display = 'none';
+    }
   }
 
   hideDoubleOrNothingChest() {
