@@ -134,7 +134,11 @@ body {
   background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
   transform: skewX(-20deg);
   pointer-events: none;
-  animation: shine 3s linear infinite;
+  transition: left 0.6s ease;
+}
+
+.nav-btn[data-section="achievements"]:hover::after {
+  left: 100%;
 }
 
 .nav-icon {
@@ -2063,18 +2067,6 @@ body {
 .achievements-container {
   max-width: 1200px;
   margin: 0 auto;
-  position: relative;
-}
-
-.achievements-container::before {
-  content: '';
-  position: absolute;
-  inset: -20%;
-  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
-  animation: rotateGlowBg 12s linear infinite;
-  border-radius: 50%;
-  filter: blur(40px);
-  z-index: -1;
 }
 
 .achievements-container h2 {
@@ -3366,10 +3358,6 @@ select:focus {
   }
 }
 
-@keyframes rotateGlowBg {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 
 @keyframes subtleFlash {
   0%, 100% {
@@ -3380,7 +3368,3 @@ select:focus {
   }
 }
 
-@keyframes shine {
-  from { left: -100%; }
-  to { left: 200%; }
-}
