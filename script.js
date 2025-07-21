@@ -404,10 +404,11 @@ class MyRPGLifeApp {
   cancelTimer() {
     if (this.timerState.startTimestamp) {
       const elapsed = Math.floor((Date.now() - this.timerState.startTimestamp) / 1000 / 60);
-      if (elapsed >= 5) {
+      if (elapsed >= 15) {
         const xpGained = this.calculateFocusXP(elapsed);
+        const isBonus = this.getMandatorySessionsToday() >= 2;
         this.addXP(xpGained, `Session Annulée ${elapsed}min`);
-        this.recordFocusSession(elapsed);
+        this.recordFocusSession(elapsed, this.timerState.duration / 60, xpGained, isBonus ? 'bonus' : 'normal');
         this.updateFocusStats();
         this.updateDashboard();
       }
@@ -450,12 +451,13 @@ class MyRPGLifeApp {
     
     const minutes = this.timerState.duration / 60;
     const xpGained = this.calculateFocusXP(minutes);
+    const isBonus = this.getMandatorySessionsToday() >= 2;
 
     this.addXP(xpGained, `Session Focus ${minutes}min`);
     if (xpGained > 1) {
       this.showXPPop(xpGained);
     }
-    this.recordFocusSession(minutes);
+    this.recordFocusSession(minutes, minutes, xpGained, isBonus ? 'bonus' : 'normal');
 
     this.updateFocusStats();
     this.updateDashboard();
@@ -610,22 +612,40 @@ class MyRPGLifeApp {
     return Math.min(2, Math.floor(dailyMinutes / 90));
   }
 
-  recordFocusSession(minutes) {
+  recordFocusSession(minutes, scheduledMinutes = minutes, xp = 0, type = 'normal') {
     const projectSelect = document.getElementById('projectSelect');
     const selectedProject = projectSelect ? projectSelect.value : null;
-    
-    this.data.focusSessions.push({
+
+    const session = {
       date: new Date().toISOString(),
       duration: minutes,
-      project: selectedProject || null
-    });
-    
+      scheduled: scheduledMinutes,
+      project: selectedProject || null,
+      xp,
+      type
+    };
+
+    this.data.focusSessions.push(session);
+
     // Update project total time
     if (selectedProject) {
       const project = this.data.projects.find(p => p.id == selectedProject);
       if (project) {
         project.totalTime += minutes;
       }
+    }
+
+    if (window.electronAPI && minutes >= 15) {
+      const start = new Date(Date.now() - minutes * 60000).toISOString();
+      const description = scheduledMinutes > minutes ? `session de ${scheduledMinutes} min stoppée à ${minutes} min` : '';
+      window.electronAPI.logFocusSession({
+        start,
+        duration: minutes,
+        project: session.project,
+        xp,
+        type,
+        description
+      });
     }
   }
 
@@ -1406,6 +1426,16 @@ class MyRPGLifeApp {
             </div>
           </div>
         </div>
+        <!-- Synchronisation -->
+        <div class="settings-card sync-settings">
+          <div class="settings-header">
+            <div class="settings-icon">📅</div>
+            <h3>Google Calendar</h3>
+          </div>
+          <div class="settings-content">
+            <button id="connectGoogleCalendarBtn" class="data-btn connect-btn">Connecter Google Calendar</button>
+          </div>
+        </div>
         
         <!-- Informations -->
         <div class="settings-card info-settings">
@@ -2073,6 +2103,18 @@ class MyRPGLifeApp {
       soundToggle.addEventListener('change', () => {
         this.data.settings = this.data.settings || {};
         this.data.settings.soundNotifications = soundToggle.checked;
+      });
+    }
+
+    const connectBtn = document.getElementById('connectGoogleCalendarBtn');
+    if (connectBtn && window.electronAPI) {
+      connectBtn.addEventListener('click', async () => {
+        const ok = await window.electronAPI.connectGoogleCalendar();
+        if (ok) {
+          this.showNotification('Google Calendar connecté', 'success');
+        } else {
+          this.showNotification('Erreur de connexion Google', 'error');
+        }
       });
     }
 
