@@ -439,8 +439,11 @@ class MyRPGLifeApp {
     
     const minutes = this.timerState.duration / 60;
     const xpGained = this.calculateFocusXP(minutes);
-    
+
     this.addXP(xpGained, `Session Focus ${minutes}min`);
+    if (xpGained > 1) {
+      this.showXPPop(xpGained);
+    }
     this.recordFocusSession(minutes);
 
     this.updateFocusStats();
@@ -871,6 +874,18 @@ class MyRPGLifeApp {
     }, 3000);
   }
 
+  showXPPop(amount) {
+    const zone = document.getElementById('xpPopContainer');
+    if (!zone) return;
+    const el = document.createElement('div');
+    el.className = 'xp-popup';
+    el.textContent = `+${amount} XP`;
+    zone.appendChild(el);
+    setTimeout(() => {
+      zone.removeChild(el);
+    }, 1000);
+  }
+
   // Weekly review
   goToWeeklyReview() {
     this.showSection('weekly');
@@ -991,7 +1006,7 @@ class MyRPGLifeApp {
       
       <div class="achievements-grid">
         ${achievements.map(achievement => `
-          <div class="achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}">
+          <div class="achievement-card ${achievement.tier} ${achievement.unlocked ? 'unlocked' : 'locked'}">
             <div class="achievement-icon">${achievement.icon}</div>
             <div class="achievement-info">
               <h4>${achievement.name}</h4>
@@ -1541,13 +1556,14 @@ class MyRPGLifeApp {
   }
 
   getAchievements() {
-    const baseAchievements = [
+    const achievements = [
       {
         id: 'first_session',
         name: 'Premier Pas',
         description: 'Complétez votre première session de focus',
         icon: '🎯',
         xp: 10,
+        tier: 'basic',
         unlocked: this.data.focusSessions.length > 0,
         unlockedAt: this.data.focusSessions[0]?.date
       },
@@ -1557,29 +1573,87 @@ class MyRPGLifeApp {
         description: 'Atteignez 15 XP en une journée',
         icon: '⚡',
         xp: 15,
+        tier: 'basic',
         unlocked: this.data.dailyXP >= 15,
         progress: this.data.dailyXP,
         target: 15
       },
       {
-        id: 'week_streak',
-        name: 'Semaine Parfaite',
-        description: '7 jours consécutifs à 15+ XP',
-        icon: '🔥',
+        id: 'focus_hunter',
+        name: 'Chasseur de Focus',
+        description: '10 sessions de focus',
+        icon: '🏹',
         xp: 25,
-        unlocked: this.getStreak() >= 7,
-        progress: this.getStreak(),
+        tier: 'medium',
+        unlocked: this.data.focusSessions.length >= 10,
+        progress: this.data.focusSessions.length,
+        target: 10
+      },
+      {
+        id: 'weekly_warrior',
+        name: 'Guerrier Hebdomadaire',
+        description: '7 jours consécutifs à 15+ XP',
+        icon: '⚔️',
+        xp: 50,
+        tier: 'medium',
+        unlocked: this.calculateStreak() >= 7,
+        progress: this.calculateStreak(),
         target: 7
+      },
+      {
+        id: 'sport_master',
+        name: 'Maître du Sport',
+        description: '7 jours consécutifs de sport',
+        icon: '🏃',
+        xp: 30,
+        tier: 'medium',
+        unlocked: this.getSportStreak() >= 7,
+        progress: this.getSportStreak(),
+        target: 7
+      },
+      {
+        id: 'discipline_forge',
+        name: 'Forgeur de Discipline',
+        description: "Réaliser 3 jours d\u2019affilée avec les 2 blocs obligatoires",
+        icon: '🛡️',
+        xp: 25,
+        tier: 'medium',
+        unlocked: this.getBlocksStreak() >= 3,
+        progress: this.getBlocksStreak(),
+        target: 3
       },
       {
         id: 'focus_master',
         name: 'Maître du Focus',
-        description: '50 sessions de focus terminées',
+        description: '50 sessions de focus',
         icon: '🧘',
-        xp: 30,
+        xp: 100,
+        tier: 'premium',
         unlocked: this.data.focusSessions.length >= 50,
         progress: this.data.focusSessions.length,
         target: 50
+      },
+      {
+        id: 'xp_collector',
+        name: 'Collectionneur XP',
+        description: 'Atteindre 1000 XP total',
+        icon: '💠',
+        xp: 150,
+        tier: 'premium',
+        unlocked: this.data.totalXP >= 1000,
+        progress: this.data.totalXP,
+        target: 1000
+      },
+      {
+        id: 'marathoner',
+        name: 'Marathonien',
+        description: '4h de focus en une journée',
+        icon: '🏅',
+        xp: 200,
+        tier: 'premium',
+        unlocked: this.getMaxDailyFocus() >= 240,
+        progress: this.getMaxDailyFocus(),
+        target: 240
       },
       {
         id: 'rank_sentinel',
@@ -1587,13 +1661,36 @@ class MyRPGLifeApp {
         description: "Atteignez le rang S",
         icon: '👑',
         xp: 50,
+        tier: 'premium',
         unlocked: this.data.totalXP >= 600,
         progress: this.data.totalXP,
         target: 600
+      },
+      {
+        id: 'living_legend',
+        name: 'Légende Vivante',
+        description: '100 sessions de focus',
+        icon: '🌠',
+        xp: 300,
+        tier: 'prestigious',
+        unlocked: this.data.focusSessions.length >= 100,
+        progress: this.data.focusSessions.length,
+        target: 100
+      },
+      {
+        id: 'season_champion',
+        name: 'Champion de Saison',
+        description: 'Terminer une saison avec rang S+',
+        icon: '🏆',
+        xp: 500,
+        tier: 'prestigious',
+        unlocked: this.hasSeasonRankSPlus(),
+        progress: this.data.totalXP,
+        target: null
       }
     ];
-    
-    return baseAchievements;
+
+    return achievements;
   }
 
   getProgressionStats() {
@@ -2092,6 +2189,53 @@ class MyRPGLifeApp {
       }
     }
     return streak;
+  }
+
+  getSportStreak() {
+    let streak = 0;
+    const today = new Date();
+    while (true) {
+      const dateStr = new Date(today.getFullYear(), today.getMonth(), today.getDate() - streak).toDateString();
+      if (this.data.dailyActions[dateStr]?.sport) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  getBlocksStreak() {
+    let streak = 0;
+    const today = new Date();
+    while (true) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - streak);
+      const dayStr = date.toDateString();
+      const dailyMinutes = this.data.focusSessions
+        .filter(s => new Date(s.date).toDateString() === dayStr)
+        .reduce((sum, s) => sum + s.duration, 0);
+      if (dailyMinutes >= 180) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  getMaxDailyFocus() {
+    const minutesByDay = {};
+    this.data.focusSessions.forEach(s => {
+      const day = new Date(s.date).toDateString();
+      minutesByDay[day] = (minutesByDay[day] || 0) + s.duration;
+    });
+    const values = Object.values(minutesByDay);
+    return values.length ? Math.max(...values) : 0;
+  }
+
+  hasSeasonRankSPlus() {
+    return this.data.totalXP >= 750;
   }
 
   // Data management
