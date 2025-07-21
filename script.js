@@ -988,8 +988,9 @@ class MyRPGLifeApp {
       </div>
     `;
 
-    // Setup sliders
+    // Setup sliders and history events
     this.setupWeeklySliders();
+    this.setupWeeklyHistoryEvents();
   }
 
   renderAchievements() {
@@ -1572,9 +1573,14 @@ class MyRPGLifeApp {
     if (this.data.weeklyReviews.length === 0) {
       return '<p class="no-reviews">Aucun bilan effectué pour le moment</p>';
     }
-    
-    return this.data.weeklyReviews.slice(-8).reverse().map(review => `
-      <div class="review-card">
+
+    return this.data.weeklyReviews
+      .slice(-8)
+      .reverse()
+      .map(review => {
+        const index = this.data.weeklyReviews.indexOf(review);
+        return `
+      <div class="review-card" data-index="${index}">
         <div class="review-header">
           <span class="review-week">Semaine ${review.week}</span>
           <span class="review-score">${review.totalScore}/50</span>
@@ -1585,8 +1591,54 @@ class MyRPGLifeApp {
           </div>
           <span>${Math.round(review.percentage)}%</span>
         </div>
+      </div>`;
+      })
+      .join('');
+  }
+
+  setupWeeklyHistoryEvents() {
+    const cards = document.querySelectorAll('.review-card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const index = parseInt(card.dataset.index, 10);
+        const review = this.data.weeklyReviews[index];
+        if (review) {
+          this.showWeeklyReviewDetails(review);
+        }
+      });
+    });
+  }
+
+  showWeeklyReviewDetails(review) {
+    const scores = review.scores;
+    const rows = [
+      ['🎯 Productivité et focus', scores.productivity],
+      ['💪 Santé et bien-être', scores.health],
+      ['🎨 Créativité et apprentissage', scores.creativity],
+      ['🤝 Relations sociales', scores.social],
+      ['😊 Satisfaction générale', scores.satisfaction]
+    ]
+      .map(
+        r => `<tr><td>${r[0]}</td><td>${r[1]}/10</td></tr>`
+      )
+      .join('');
+    const modalContent = `
+      <div class="modal-header">
+        <h3>Détails Bilan - Semaine ${review.week}</h3>
+        <button class="modal-close" onclick="app.closeModal()">×</button>
       </div>
-    `).join('');
+      <div class="modal-body">
+        <table class="detail-table">
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+        <div class="reflection-text">
+          <h4>Réflexion</h4>
+          <p>${review.reflection ? review.reflection.replace(/\n/g, '<br>') : 'Aucune réflexion enregistrée.'}</p>
+        </div>
+      </div>`;
+    this.showModal(modalContent, true);
   }
 
   getAchievements() {
