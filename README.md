@@ -143,6 +143,30 @@ Application immersive de gamification pour booster la productivité et la discip
 - **Compatibilité**: Navigateurs modernes
 - **Responsive**: Optimisé pour PC
 
+### Lancer l'application Electron
+
+1. Installez Node.js et npm.
+2. Dans ce dossier exécutez `npm install` pour récupérer les dépendances.
+3. Démarrez l'application avec `npm start`.
+4. Ouvrez ensuite l'onglet **Paramètres** et cliquez sur **Connecter Google Calendar** pour lier votre compte.
+
+### Changer l'icône de la fenêtre
+
+1. Placez votre icône (format `.png`) dans `assets/icon.png`.
+2. Dans `main.js`, ajoutez ou modifiez l'option `icon` lors de la création de `BrowserWindow` :
+   ```js
+   const win = new BrowserWindow({
+     width: 1200,
+     height: 800,
+     icon: path.join(__dirname, 'assets', 'icon.png'),
+     webPreferences: {
+       preload: path.join(__dirname, 'preload.js'),
+       contextIsolation: true,
+       nodeIntegration: false,
+     },
+   });
+   ```
+
 ## 🎯 Objectifs de Performance
 
 - Score ≥ 750 XP par saison
