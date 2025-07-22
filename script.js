@@ -16,7 +16,8 @@ class MyRPGLifeApp {
       breakRemaining: 0,
       breakCount: 0,
       totalBreaks: 0,
-      autoBreaks: false
+      autoBreaks: false,
+      spotifyModeActive: false
     };
 
     // Project editing state
@@ -353,6 +354,17 @@ class MyRPGLifeApp {
 
     this.enterFocusMode();
     this.disableTimerOptions();
+
+    const spotifyBox = document.getElementById('spotifyMode');
+    this.timerState.spotifyModeActive = !!spotifyBox?.checked;
+    if (this.timerState.spotifyModeActive && window.electronAPI) {
+      if (window.electronAPI.launchSpotifyApp) {
+        window.electronAPI.launchSpotifyApp();
+      }
+      if (window.electronAPI.playSpotify) {
+        window.electronAPI.playSpotify();
+      }
+    }
     
     const startPauseBtn = document.getElementById('startPauseBtn');
     const startPauseText = document.getElementById('startPauseText');
@@ -415,6 +427,9 @@ class MyRPGLifeApp {
         this.updateDashboard();
       }
     }
+    if (this.timerState.spotifyModeActive && window.electronAPI?.pauseSpotify) {
+      window.electronAPI.pauseSpotify();
+    }
     this.resetTimer();
   }
 
@@ -426,6 +441,7 @@ class MyRPGLifeApp {
     this.timerState.isBreak = false;
     this.timerState.breakRemaining = 0;
     this.timerState.breakCount = 0;
+    this.timerState.spotifyModeActive = false;
 
     this.exitFocusMode();
     this.enableTimerOptions();
@@ -464,6 +480,10 @@ class MyRPGLifeApp {
 
     this.updateFocusStats();
     this.updateDashboard();
+
+    if (this.timerState.spotifyModeActive && window.electronAPI?.pauseSpotify) {
+      window.electronAPI.pauseSpotify();
+    }
 
     this.showNotification(`🎯 Session terminée ! +${xpGained} XP`, 'success');
     this.resetTimer();
@@ -1287,6 +1307,9 @@ class MyRPGLifeApp {
     const googleConnected = window.electronAPI?.isGoogleConnected
       ? await window.electronAPI.isGoogleConnected()
       : false;
+    const spotifyConnected = window.electronAPI?.isSpotifyConnected
+      ? await window.electronAPI.isSpotifyConnected()
+      : false;
 
     settingsContent.innerHTML = `
       <div class="settings-grid">
@@ -1453,7 +1476,21 @@ class MyRPGLifeApp {
               : `<button id="connectGoogleCalendarBtn" class="data-btn connect-btn">Se connecter à Google Calendar</button>`}
           </div>
         </div>
-        
+        <div class="settings-card spotify-settings">
+          <div class="settings-header">
+            <div class="settings-icon">🎵</div>
+            <h3>Spotify</h3>
+          </div>
+          <div class="settings-content">
+            ${spotifyConnected
+              ? `<div class="connected-status"><span class="status-icon">🟢</span> Compte Spotify connecté</div>
+                 <div class="gc-actions">
+                   <button id="disconnectSpotifyBtn" class="data-btn disconnect-btn">Se déconnecter</button>
+                 </div>`
+              : `<button id="connectSpotifyBtn" class="data-btn connect-btn">Se connecter à Spotify</button>`}
+          </div>
+        </div>
+
         <!-- Informations -->
         <div class="settings-card info-settings">
           <div class="settings-header">
@@ -2158,6 +2195,30 @@ class MyRPGLifeApp {
           this.renderSettings();
         } else {
           this.showNotification('Erreur de déconnexion Google', 'error');
+        }
+      });
+    }
+
+    const connectSpotifyBtn = document.getElementById('connectSpotifyBtn');
+    if (connectSpotifyBtn && window.electronAPI) {
+      connectSpotifyBtn.addEventListener('click', async () => {
+        const ok = await window.electronAPI.connectSpotify();
+        if (ok) {
+          this.showNotification('Spotify connecté', 'success');
+          this.renderSettings();
+        } else {
+          this.showNotification('Erreur de connexion Spotify', 'error');
+        }
+      });
+    }
+
+    const disconnectSpotifyBtn = document.getElementById('disconnectSpotifyBtn');
+    if (disconnectSpotifyBtn && window.electronAPI) {
+      disconnectSpotifyBtn.addEventListener('click', async () => {
+        const ok = await window.electronAPI.disconnectSpotify();
+        if (ok) {
+          this.showNotification('Spotify déconnecté', 'success');
+          this.renderSettings();
         }
       });
     }
