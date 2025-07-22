@@ -2236,10 +2236,40 @@ class MyRPGLifeApp {
   updateDashboard() {
     // Update XP display
     const currentXPEl = document.getElementById('currentXP');
+    const nextRankXPEl = document.getElementById('nextRankXP');
+    const xpFill = document.getElementById('xpFill');
     const dailyXPEl = document.getElementById('dailyXP');
-    
+
     if (currentXPEl) currentXPEl.textContent = this.data.totalXP;
     if (dailyXPEl) dailyXPEl.textContent = this.data.dailyXP;
+
+    if (xpFill && nextRankXPEl) {
+      const ranks = [
+        { xp: 0 },
+        { xp: 200 },
+        { xp: 300 },
+        { xp: 400 },
+        { xp: 500 },
+        { xp: 600 },
+        { xp: 700 },
+        { xp: 750 }
+      ];
+
+      const current = this.getCurrentRank();
+      const currentIndex = ranks.findIndex(r => r.xp === current.xp);
+      const next = ranks[Math.min(currentIndex + 1, ranks.length - 1)];
+
+      const percent =
+        current.xp === next.xp
+          ? 100
+          : Math.min(
+              100,
+              ((this.data.totalXP - current.xp) / (next.xp - current.xp)) * 100
+            );
+
+      xpFill.style.width = `${percent}%`;
+      nextRankXPEl.textContent = next.xp;
+    }
     
     // Update challenge progress
     const challengeFill = document.getElementById('challengeFill');
@@ -2586,6 +2616,7 @@ class MyRPGLifeApp {
     const seasonEl = document.getElementById('currentSeason');
     const weekEl = document.getElementById('currentWeek');
     const daysEl = document.getElementById('daysRemaining');
+    const seasonFill = document.getElementById('seasonFill');
 
     if (!this.data.seasonStartDate) return;
     const start = new Date(this.data.seasonStartDate);
@@ -2596,6 +2627,11 @@ class MyRPGLifeApp {
     if (seasonEl) seasonEl.textContent = this.data.seasonNumber;
     if (weekEl) weekEl.textContent = Math.min(6, week);
     if (daysEl) daysEl.textContent = remaining;
+    if (seasonFill) {
+      const percent = Math.min(100, (diffDays / 42) * 100);
+      seasonFill.style.width = `${percent}%`;
+      seasonFill.classList.toggle('ending', remaining <= 7);
+    }
   }
 
   updateLastSeasonDisplay() {
