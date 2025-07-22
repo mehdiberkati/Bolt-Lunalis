@@ -104,6 +104,14 @@ async function addFocusSessionToCalendar(session) {
 app.whenReady().then(createWindow);
 
 ipcMain.handle('connect-google-calendar', authenticateWithGoogle);
+ipcMain.handle('is-google-connected', () => {
+  try {
+    const token = fs.readFileSync(TOKEN_PATH, 'utf8');
+    return !!JSON.parse(token).access_token;
+  } catch {
+    return false;
+  }
+});
 ipcMain.handle('log-focus-session', async (event, session) => {
   return addFocusSessionToCalendar(session);
 });
