@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Application immersive de gamification pour booster la productivité et la discipline. Transformez vos objectifs en aventure RPG avec un système XP avancé, des avatars évolutifs et une progression saisonnière.",
   "main": "main.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write .",
