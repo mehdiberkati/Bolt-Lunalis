@@ -346,6 +346,8 @@ class MyRPGLifeApp {
     this.timerState.totalBreaks = Math.floor(this.timerState.duration / (25 * 60));
     this.timerState.breakCount = this.timerState.breakCount || 0;
 
+    this.updateBreakInfo();
+
     this.timerState.startTimestamp = Date.now() -
       (this.timerState.duration - this.timerState.remaining) * 1000;
 
@@ -438,6 +440,7 @@ class MyRPGLifeApp {
     
     clearInterval(this.timer);
     this.updateTimerDisplay();
+    this.updateBreakInfo();
   }
 
   completeTimer() {
@@ -514,8 +517,12 @@ class MyRPGLifeApp {
     const autoBreaksToggle = document.getElementById('autoBreaks');
     if (!info || !autoBreaksToggle) return;
     if (autoBreaksToggle.checked) {
-      const breaks = Math.floor(this.timerState.duration / (25 * 60));
-      info.textContent = `${breaks} pause${breaks > 1 ? 's' : ''} prévues`;
+      const total = Math.floor(this.timerState.duration / (25 * 60));
+      const remaining = total - this.timerState.breakCount;
+      const label = this.timerState.isRunning || this.timerState.breakCount > 0
+        ? `${remaining} pause${remaining > 1 ? 's' : ''} restantes pour la session`
+        : `${total} pause${total > 1 ? 's' : ''} prévues`;
+      info.innerHTML = `<span class="remaining">${label}</span>`;
     } else {
       info.textContent = '';
     }
@@ -1273,9 +1280,13 @@ class MyRPGLifeApp {
       .sort((a, b) => b.totalTime - a.totalTime);
   }
 
-  renderSettings() {
+  async renderSettings() {
     const settingsContent = document.getElementById('settingsContent');
     if (!settingsContent) return;
+
+    const googleConnected = window.electronAPI?.isGoogleConnected
+      ? await window.electronAPI.isGoogleConnected()
+      : false;
 
     settingsContent.innerHTML = `
       <div class="settings-grid">
@@ -1433,7 +1444,13 @@ class MyRPGLifeApp {
             <h3>Google Calendar</h3>
           </div>
           <div class="settings-content">
-            <button id="connectGoogleCalendarBtn" class="data-btn connect-btn">Connecter Google Calendar</button>
+            ${googleConnected
+              ? `<div class="connected-status"><span class="status-icon">🟢</span> Compte Google Connecté</div>
+                 <div class="gc-actions">
+                   <button id="openGoogleCalendarBtn" class="data-btn open-btn">Ouvrir Google Calendar</button>
+                   <button id="disconnectGoogleCalendarBtn" class="data-btn disconnect-btn">Se déconnecter</button>
+                 </div>`
+              : `<button id="connectGoogleCalendarBtn" class="data-btn connect-btn">Se connecter à Google Calendar</button>`}
           </div>
         </div>
         
@@ -2112,8 +2129,31 @@ class MyRPGLifeApp {
         const ok = await window.electronAPI.connectGoogleCalendar();
         if (ok) {
           this.showNotification('Google Calendar connecté', 'success');
+          this.renderSettings();
         } else {
           this.showNotification('Erreur de connexion Google', 'error');
+        }
+      });
+    }
+
+    const openBtn = document.getElementById('openGoogleCalendarBtn');
+    if (openBtn && window.electronAPI) {
+      openBtn.addEventListener('click', () => {
+        window.electronAPI.openExternal(
+          'https://calendar.google.com/calendar/u/0/r'
+        );
+      });
+    }
+
+    const disconnectBtn = document.getElementById('disconnectGoogleCalendarBtn');
+    if (disconnectBtn && window.electronAPI) {
+      disconnectBtn.addEventListener('click', async () => {
+        const ok = await window.electronAPI.disconnectGoogleCalendar();
+        if (ok) {
+          this.showNotification('Google Calendar déconnecté', 'success');
+          this.renderSettings();
+        } else {
+          this.showNotification('Erreur de déconnexion Google', 'error');
         }
       });
     }

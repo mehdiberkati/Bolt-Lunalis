@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { google } = require('googleapis');
@@ -104,6 +104,35 @@ async function addFocusSessionToCalendar(session) {
 app.whenReady().then(createWindow);
 
 ipcMain.handle('connect-google-calendar', authenticateWithGoogle);
+ipcMain.handle('is-google-connected', () => {
+  try {
+    const token = fs.readFileSync(TOKEN_PATH, 'utf8');
+    return !!JSON.parse(token).access_token;
+  } catch {
+    return false;
+  }
+});
+ipcMain.handle('disconnect-google-calendar', () => {
+  try {
+    if (fs.existsSync(TOKEN_PATH)) {
+      fs.unlinkSync(TOKEN_PATH);
+    }
+    if (oauth2Client) {
+      oauth2Client.setCredentials({});
+    }
+    return true;
+  } catch {
+    return false;
+  }
+});
+ipcMain.handle('open-external', async (event, url) => {
+  try {
+    await shell.openExternal(url);
+    return true;
+  } catch {
+    return false;
+  }
+});
 ipcMain.handle('log-focus-session', async (event, session) => {
   return addFocusSessionToCalendar(session);
 });
