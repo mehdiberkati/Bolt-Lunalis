@@ -1,4 +1,4 @@
-import { calculateFocusXP, calculateIntensityRate } from './xp.js';
+const { calculateFocusXP, calculateIntensityRate } = require('./xp.js');
 
 test('calculateFocusXP returns bonus XP after mandatory sessions', () => {
   expect(calculateFocusXP(36, 2)).toBe(4); // 36 min -> baseXP=2, double=4

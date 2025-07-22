@@ -1612,6 +1612,8 @@ class MyRPGLifeApp {
     this.data.weeklyReviews.push(review);
     this.addXP(5, 'Bilan Hebdomadaire');
     this.showNotification('✨ Bilan hebdomadaire terminé ! +5 XP', 'success');
+    this.updateUI();
+    this.saveData();
     this.startWeeklyCountdown();
     this.renderWeeklyReview();
   }
@@ -2004,21 +2006,23 @@ class MyRPGLifeApp {
       { name: 'Élu du Destin', xp: 750, badge: 'SSS', avatar: '🌙' }
     ];
     
-    return ranks.map(rank => {
-      const isUnlocked = this.data.totalXP >= rank.xp;
-      const isCurrent = this.getCurrentRank().name === rank.name;
-      
-      return `
-        <div class="rank-item ${isUnlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
-          <div class="rank-avatar">${rank.avatar}</div>
-          <div class="rank-info">
-            <div class="rank-name">${rank.name}</div>
-            <div class="rank-requirement">${rank.xp} XP</div>
+    return ranks
+      .map(rank => {
+        const isUnlocked = this.data.totalXP >= rank.xp;
+        const isCurrent = this.getCurrentRank().name === rank.name;
+        const badgeClass = `rank-${rank.badge.toLowerCase()}`;
+
+        return `
+          <div class="rank-item ${badgeClass} ${isUnlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
+            <div class="rank-avatar">${rank.avatar}</div>
+            <div class="rank-info">
+              <div class="rank-name">${rank.name} <span class="rank-class">${rank.badge}</span></div>
+              <div class="rank-requirement">${rank.xp} XP</div>
+            </div>
           </div>
-          <div class="rank-badge">${rank.badge}</div>
-        </div>
-      `;
-    }).join('');
+        `;
+      })
+      .join('');
   }
 
   renderRankProgressBar() {
