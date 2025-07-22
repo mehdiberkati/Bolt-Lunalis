@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { google } = require('googleapis');
@@ -120,6 +120,14 @@ ipcMain.handle('disconnect-google-calendar', () => {
     if (oauth2Client) {
       oauth2Client.setCredentials({});
     }
+    return true;
+  } catch {
+    return false;
+  }
+});
+ipcMain.handle('open-external', async (event, url) => {
+  try {
+    await shell.openExternal(url);
     return true;
   } catch {
     return false;

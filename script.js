@@ -2139,7 +2139,9 @@ class MyRPGLifeApp {
     const openBtn = document.getElementById('openGoogleCalendarBtn');
     if (openBtn && window.electronAPI) {
       openBtn.addEventListener('click', () => {
-        window.electronAPI.openExternal('https://calendar.google.com');
+        window.electronAPI.openExternal(
+          'https://calendar.google.com/calendar/u/0/r'
+        );
       });
     }
 
