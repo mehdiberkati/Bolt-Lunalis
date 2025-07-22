@@ -287,6 +287,31 @@ body {
   color: var(--text-secondary);
   font-size: 0.95rem;
 }
+.season-bar {
+  width: 100%;
+  height: 12px;
+  background: var(--accent-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.season-fill {
+  height: 100%;
+  background: var(--gradient-accent);
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.season-fill.ending {
+  background: linear-gradient(45deg, #dc2626, #f87171);
+  animation: seasonGlow 1s infinite alternate;
+}
+
+@keyframes seasonGlow {
+  from { box-shadow: 0 0 5px rgba(220,38,38,0.6); }
+  to { box-shadow: 0 0 15px rgba(248,113,113,1); }
+}
 
 /* Défi Journalier - Design Amélioré */
 .daily-challenge {
@@ -2542,12 +2567,10 @@ body {
 }
 
 .rank-item.unlocked {
-  background: rgba(16, 185, 129, 0.1);
   border-color: var(--success-color);
 }
 
 .rank-item.current {
-  background: rgba(0, 212, 255, 0.1);
   border-color: var(--primary-color);
   box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
 }
@@ -2576,14 +2599,73 @@ body {
   font-size: 0.9rem;
 }
 
-.rank-badge {
+.rank-class {
   background: var(--accent-bg);
   color: var(--text-primary);
-  padding: 0.5rem;
-  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
   font-weight: bold;
-  min-width: 40px;
+  margin-left: 0.5rem;
+  display: inline-block;
+  min-width: 32px;
   text-align: center;
+}
+
+/* Rank prestige styles */
+.rank-e {
+  background: var(--background-alt);
+}
+
+.rank-d {
+  background: linear-gradient(45deg, #2d2d2d, #3a3a3a);
+}
+
+.rank-c {
+  background: linear-gradient(45deg, #374151, #4b5563);
+  color: #fff;
+}
+
+.rank-b {
+  background: linear-gradient(45deg, #1e3a8a, #2563eb);
+  color: #fff;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+}
+
+.rank-a {
+  background: linear-gradient(45deg, #7c3aed, #c084fc);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.6);
+}
+
+.rank-s {
+  background: linear-gradient(45deg, #f59e0b, #fbbf24);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+}
+
+.rank-ss {
+  background: linear-gradient(45deg, #ec4899, #f472b6);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.8);
+}
+
+.rank-sss {
+  background: linear-gradient(45deg, #d97706, #facc15, #ef4444);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.9), 0 0 25px rgba(250, 204, 21, 0.9);
+  animation: premiumGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes premiumGlow {
+  from {
+    box-shadow: 0 0 10px rgba(250, 204, 21, 0.8), 0 0 20px rgba(239, 68, 68, 0.8);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(250, 204, 21, 1), 0 0 30px rgba(239, 68, 68, 1);
+  }
+}
+.rank-s .rank-requirement, .rank-ss .rank-requirement, .rank-sss .rank-requirement {
+  color: #000;
 }
 
 .projects-stats {

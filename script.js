@@ -1612,6 +1612,8 @@ class MyRPGLifeApp {
     this.data.weeklyReviews.push(review);
     this.addXP(5, 'Bilan Hebdomadaire');
     this.showNotification('✨ Bilan hebdomadaire terminé ! +5 XP', 'success');
+    this.updateUI();
+    this.saveData();
     this.startWeeklyCountdown();
     this.renderWeeklyReview();
   }
@@ -2004,21 +2006,23 @@ class MyRPGLifeApp {
       { name: 'Élu du Destin', xp: 750, badge: 'SSS', avatar: '🌙' }
     ];
     
-    return ranks.map(rank => {
-      const isUnlocked = this.data.totalXP >= rank.xp;
-      const isCurrent = this.getCurrentRank().name === rank.name;
-      
-      return `
-        <div class="rank-item ${isUnlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
-          <div class="rank-avatar">${rank.avatar}</div>
-          <div class="rank-info">
-            <div class="rank-name">${rank.name}</div>
-            <div class="rank-requirement">${rank.xp} XP</div>
+    return ranks
+      .map(rank => {
+        const isUnlocked = this.data.totalXP >= rank.xp;
+        const isCurrent = this.getCurrentRank().name === rank.name;
+        const badgeClass = `rank-${rank.badge.toLowerCase()}`;
+
+        return `
+          <div class="rank-item ${badgeClass} ${isUnlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
+            <div class="rank-avatar">${rank.avatar}</div>
+            <div class="rank-info">
+              <div class="rank-name">${rank.name} <span class="rank-class">${rank.badge}</span></div>
+              <div class="rank-requirement">${rank.xp} XP</div>
+            </div>
           </div>
-          <div class="rank-badge">${rank.badge}</div>
-        </div>
-      `;
-    }).join('');
+        `;
+      })
+      .join('');
   }
 
   renderRankProgressBar() {
@@ -2232,10 +2236,40 @@ class MyRPGLifeApp {
   updateDashboard() {
     // Update XP display
     const currentXPEl = document.getElementById('currentXP');
+    const nextRankXPEl = document.getElementById('nextRankXP');
+    const xpFill = document.getElementById('xpFill');
     const dailyXPEl = document.getElementById('dailyXP');
-    
+
     if (currentXPEl) currentXPEl.textContent = this.data.totalXP;
     if (dailyXPEl) dailyXPEl.textContent = this.data.dailyXP;
+
+    if (xpFill && nextRankXPEl) {
+      const ranks = [
+        { xp: 0 },
+        { xp: 200 },
+        { xp: 300 },
+        { xp: 400 },
+        { xp: 500 },
+        { xp: 600 },
+        { xp: 700 },
+        { xp: 750 }
+      ];
+
+      const current = this.getCurrentRank();
+      const currentIndex = ranks.findIndex(r => r.xp === current.xp);
+      const next = ranks[Math.min(currentIndex + 1, ranks.length - 1)];
+
+      const percent =
+        current.xp === next.xp
+          ? 100
+          : Math.min(
+              100,
+              ((this.data.totalXP - current.xp) / (next.xp - current.xp)) * 100
+            );
+
+      xpFill.style.width = `${percent}%`;
+      nextRankXPEl.textContent = next.xp;
+    }
     
     // Update challenge progress
     const challengeFill = document.getElementById('challengeFill');
@@ -2582,6 +2616,7 @@ class MyRPGLifeApp {
     const seasonEl = document.getElementById('currentSeason');
     const weekEl = document.getElementById('currentWeek');
     const daysEl = document.getElementById('daysRemaining');
+    const seasonFill = document.getElementById('seasonFill');
 
     if (!this.data.seasonStartDate) return;
     const start = new Date(this.data.seasonStartDate);
@@ -2592,6 +2627,11 @@ class MyRPGLifeApp {
     if (seasonEl) seasonEl.textContent = this.data.seasonNumber;
     if (weekEl) weekEl.textContent = Math.min(6, week);
     if (daysEl) daysEl.textContent = remaining;
+    if (seasonFill) {
+      const percent = Math.min(100, (diffDays / 42) * 100);
+      seasonFill.style.width = `${percent}%`;
+      seasonFill.classList.toggle('ending', remaining <= 7);
+    }
   }
 
   updateLastSeasonDisplay() {
