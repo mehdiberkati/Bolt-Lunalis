@@ -2,20 +2,27 @@
   "name": "lunalis-16-07-2025",
   "version": "1.0.0",
   "description": "Application immersive de gamification pour booster la productivité et la discipline. Transformez vos objectifs en aventure RPG avec un système XP avancé, des avatars évolutifs et une progression saisonnière.",
-  "main": "script.js",
+  "main": "main.js",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "electron .",
+    "package-win": "electron-packager . Lunalis --platform=win32 --arch=x64 --out=release --overwrite"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "electron-packager": "^17.1.2",
     "eslint": "^9.31.0",
     "globals": "^16.3.0",
     "jest": "^30.0.4",
     "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "electron": "^30.0.0",
+    "googleapis": "^133.0.0"
   }
 }

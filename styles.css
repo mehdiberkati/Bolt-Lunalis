@@ -2909,6 +2909,10 @@ body {
   width: 40px;
   text-align: center;
 }
+.connect-btn:hover {
+  border-color: var(--primary-color);
+  background: rgba(0, 212, 255, 0.1);
+}
 
 .btn-content {
   flex: 1;
