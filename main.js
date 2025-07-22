@@ -166,16 +166,9 @@ async function pauseSpotify() {
 
 async function launchSpotifyApp() {
   try {
-    if (process.platform === 'win32') {
-      const exePath = path.join(process.env.APPDATA || '', 'Spotify', 'Spotify.exe');
-      if (fs.existsSync(exePath)) {
-        await shell.openPath(exePath);
-        return true;
-      }
-      await shell.openExternal('ms-windows-store://pdp/?productid=9NCBCSZSJRSB');
-      return false;
-    }
-    await shell.openExternal('spotify:');
+    // Open the playlist URI directly. If Spotify is not installed,
+    // Windows will automatically redirect to the Microsoft Store page.
+    await shell.openExternal('spotify:playlist:37i9dQZF1DXadOVCgGhS7j');
     return true;
   } catch (err) {
     console.error('Launch Spotify app error', err);
