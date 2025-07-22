@@ -16,7 +16,8 @@ class MyRPGLifeApp {
       breakRemaining: 0,
       breakCount: 0,
       totalBreaks: 0,
-      autoBreaks: false
+      autoBreaks: false,
+      spotifyModeActive: false
     };
 
     // Project editing state
@@ -355,7 +356,8 @@ class MyRPGLifeApp {
     this.disableTimerOptions();
 
     const spotifyBox = document.getElementById('spotifyMode');
-    if (spotifyBox?.checked && window.electronAPI) {
+    this.timerState.spotifyModeActive = !!spotifyBox?.checked;
+    if (this.timerState.spotifyModeActive && window.electronAPI) {
       if (window.electronAPI.launchSpotifyApp) {
         window.electronAPI.launchSpotifyApp();
       }
@@ -425,8 +427,7 @@ class MyRPGLifeApp {
         this.updateDashboard();
       }
     }
-    const spotifyBox = document.getElementById('spotifyMode');
-    if (spotifyBox?.checked && window.electronAPI?.pauseSpotify) {
+    if (this.timerState.spotifyModeActive && window.electronAPI?.pauseSpotify) {
       window.electronAPI.pauseSpotify();
     }
     this.resetTimer();
@@ -440,6 +441,7 @@ class MyRPGLifeApp {
     this.timerState.isBreak = false;
     this.timerState.breakRemaining = 0;
     this.timerState.breakCount = 0;
+    this.timerState.spotifyModeActive = false;
 
     this.exitFocusMode();
     this.enableTimerOptions();
@@ -479,8 +481,7 @@ class MyRPGLifeApp {
     this.updateFocusStats();
     this.updateDashboard();
 
-    const spotifyBox = document.getElementById('spotifyMode');
-    if (spotifyBox?.checked && window.electronAPI?.pauseSpotify) {
+    if (this.timerState.spotifyModeActive && window.electronAPI?.pauseSpotify) {
       window.electronAPI.pauseSpotify();
     }
 
