@@ -10,5 +10,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isSpotifyConnected: () => ipcRenderer.invoke('is-spotify-connected'),
   disconnectSpotify: () => ipcRenderer.invoke('disconnect-spotify'),
   playSpotify: () => ipcRenderer.invoke('play-spotify'),
-  pauseSpotify: () => ipcRenderer.invoke('pause-spotify')
+  pauseSpotify: () => ipcRenderer.invoke('pause-spotify'),
+  launchSpotifyApp: () => ipcRenderer.invoke('launch-spotify-app')
 });

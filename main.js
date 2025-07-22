@@ -3,8 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const { google } = require('googleapis');
 
-const SPOTIFY_CLIENT_ID = 'xxxx';
-const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '';
+const SPOTIFY_CLIENT_ID = '23351c09e9314ed39a04c0cee74b30db';
+const SPOTIFY_CLIENT_SECRET = '8b7c9ad0c1c84a87b43bb46be26540bd';
 const SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:8888/callback';
 const SPOTIFY_SCOPES = 'streaming user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
@@ -164,6 +164,30 @@ async function pauseSpotify() {
   }
 }
 
+async function launchSpotifyApp() {
+  try {
+    if (process.platform === 'win32') {
+      const exePath = path.join(process.env.APPDATA || '', 'Spotify', 'Spotify.exe');
+      if (fs.existsSync(exePath)) {
+        await shell.openPath(exePath);
+        return true;
+      }
+      await shell.openExternal('ms-windows-store://pdp/?productid=9NCBCSZSJRSB');
+      return false;
+    }
+    await shell.openExternal('spotify:');
+    return true;
+  } catch (err) {
+    console.error('Launch Spotify app error', err);
+    try {
+      if (process.platform === 'win32') {
+        await shell.openExternal('ms-windows-store://pdp/?productid=9NCBCSZSJRSB');
+      }
+    } catch {}
+    return false;
+  }
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
@@ -283,6 +307,7 @@ ipcMain.handle('is-spotify-connected', () => isSpotifyConnected());
 ipcMain.handle('disconnect-spotify', () => disconnectSpotify());
 ipcMain.handle('play-spotify', playSpotify);
 ipcMain.handle('pause-spotify', pauseSpotify);
+ipcMain.handle('launch-spotify-app', launchSpotifyApp);
 ipcMain.handle('open-external', async (event, url) => {
   try {
     await shell.openExternal(url);

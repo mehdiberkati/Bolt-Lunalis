@@ -355,8 +355,13 @@ class MyRPGLifeApp {
     this.disableTimerOptions();
 
     const spotifyBox = document.getElementById('spotifyMode');
-    if (spotifyBox?.checked && window.electronAPI?.playSpotify) {
-      window.electronAPI.playSpotify();
+    if (spotifyBox?.checked && window.electronAPI) {
+      if (window.electronAPI.launchSpotifyApp) {
+        window.electronAPI.launchSpotifyApp();
+      }
+      if (window.electronAPI.playSpotify) {
+        window.electronAPI.playSpotify();
+      }
     }
     
     const startPauseBtn = document.getElementById('startPauseBtn');
