@@ -1010,6 +1010,16 @@ body {
   background: rgba(0, 212, 255, 0.1);
 }
 
+.disconnect-btn:hover {
+  border-color: var(--error-color);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.gc-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 /* Focus Stats Panel */
 .focus-stats-panel {
   background: var(--card-bg);

@@ -1446,8 +1446,11 @@ class MyRPGLifeApp {
           <div class="settings-content">
             ${googleConnected
               ? `<div class="connected-status"><span class="status-icon">🟢</span> Compte Google Connecté</div>
-                 <button id="openGoogleCalendarBtn" class="data-btn open-btn">Ouvrir Google Calendar</button>`
-              : `<button id="connectGoogleCalendarBtn" class="data-btn connect-btn">Connecter Google Calendar</button>`}
+                 <div class="gc-actions">
+                   <button id="openGoogleCalendarBtn" class="data-btn open-btn">Ouvrir Google Calendar</button>
+                   <button id="disconnectGoogleCalendarBtn" class="data-btn disconnect-btn">Se déconnecter</button>
+                 </div>`
+              : `<button id="connectGoogleCalendarBtn" class="data-btn connect-btn">Se connecter à Google Calendar</button>`}
           </div>
         </div>
         
@@ -2137,6 +2140,19 @@ class MyRPGLifeApp {
     if (openBtn && window.electronAPI) {
       openBtn.addEventListener('click', () => {
         window.electronAPI.openExternal('https://calendar.google.com');
+      });
+    }
+
+    const disconnectBtn = document.getElementById('disconnectGoogleCalendarBtn');
+    if (disconnectBtn && window.electronAPI) {
+      disconnectBtn.addEventListener('click', async () => {
+        const ok = await window.electronAPI.disconnectGoogleCalendar();
+        if (ok) {
+          this.showNotification('Google Calendar déconnecté', 'success');
+          this.renderSettings();
+        } else {
+          this.showNotification('Erreur de déconnexion Google', 'error');
+        }
       });
     }
 

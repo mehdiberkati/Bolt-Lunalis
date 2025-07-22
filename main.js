@@ -112,6 +112,19 @@ ipcMain.handle('is-google-connected', () => {
     return false;
   }
 });
+ipcMain.handle('disconnect-google-calendar', () => {
+  try {
+    if (fs.existsSync(TOKEN_PATH)) {
+      fs.unlinkSync(TOKEN_PATH);
+    }
+    if (oauth2Client) {
+      oauth2Client.setCredentials({});
+    }
+    return true;
+  } catch {
+    return false;
+  }
+});
 ipcMain.handle('log-focus-session', async (event, session) => {
   return addFocusSessionToCalendar(session);
 });
