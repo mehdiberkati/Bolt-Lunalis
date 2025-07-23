@@ -60,9 +60,29 @@ const INTENSITY_LEVELS = [
     role: 'Maître',
     description:
       "Tu exploses tous tes objectifs. Tu es en pleine fusion avec ta mission. Rien ne peut t\u2019arrêter : tu es aligné, focus, inarrêtable.",
-    color: 'linear-gradient(#8a2387,#e94057,#f27121)'
+    color: 'linear-gradient(#8a2387,#e94057,#f27121,#fffb00)'
   }
 ];
+
+function extractBaseColor(color) {
+  if (color.startsWith('linear-gradient')) {
+    const match = color.match(/#(?:[0-9a-fA-F]{3,6})/);
+    return match ? match[0] : '#ffffff';
+  }
+  return color;
+}
+
+function lightenColor(hex, percent) {
+  let num = parseInt(hex.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const r = (num >> 16) + amt;
+  const g = ((num >> 8) & 0x00ff) + amt;
+  const b = (num & 0x00ff) + amt;
+  const clamp = v => Math.max(0, Math.min(255, v));
+  return (
+    '#' + ((1 << 24) + (clamp(r) << 16) + (clamp(g) << 8) + clamp(b)).toString(16).slice(1)
+  );
+}
 
 class MyRPGLifeApp {
     constructor() {
@@ -2919,12 +2939,21 @@ class MyRPGLifeApp {
     if (!valueEl || !labelEl || !fillEl) return;
 
     const level = INTENSITY_LEVELS.find(l => rate >= l.min && rate <= l.max) || INTENSITY_LEVELS[0];
+    const card = document.getElementById('intensityCard');
+
     valueEl.textContent = `${rate}%`;
     labelEl.textContent = `${level.emoji} ${level.title}`;
     fillEl.style.width = `${Math.min(rate, 100)}%`;
     fillEl.style.background = level.color;
-    valueEl.style.color = level.color.includes('gradient') ? '#ffff66' : level.color;
-    if (rate >= 95) {
+    fillEl.classList.add('bar-shimmer');
+
+    const base = extractBaseColor(level.color);
+    const light = lightenColor(base, 30);
+    card.style.setProperty('--intensity-color', base);
+    fillEl.style.boxShadow = `0 0 10px ${light}`;
+    valueEl.style.color = base;
+
+    if (rate >= 85) {
       valueEl.classList.add('intensity-glow');
     } else {
       valueEl.classList.remove('intensity-glow');
