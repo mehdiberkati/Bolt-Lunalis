@@ -1,3 +1,5 @@
+const CURRENT_DATA_VERSION = 1;
+
 class MyRPGLifeApp {
     constructor() {
     this.data = this.loadData();
@@ -2591,6 +2593,7 @@ class MyRPGLifeApp {
   // Data management
   getDefaultData() {
     return {
+      version: CURRENT_DATA_VERSION,
       started: false,
       seasonNumber: 1,
       seasonStartDate: null,
@@ -2613,6 +2616,18 @@ class MyRPGLifeApp {
     };
   }
 
+  migrateData(data, fromVersion) {
+    switch (fromVersion) {
+      case 0:
+        // Version 0 had no version field
+        data.version = 1;
+        break;
+      default:
+        break;
+    }
+    return data;
+  }
+
 
   loadData() {
     const defaultData = this.getDefaultData();
@@ -2622,12 +2637,20 @@ class MyRPGLifeApp {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (validateData(parsed)) {
-          const data = {
+          let data = {
             ...defaultData,
             ...parsed,
             settings: { ...defaultData.settings, ...(parsed.settings || {}) },
             lastDailyReset: parsed.lastDailyReset || defaultData.lastDailyReset
           };
+
+          let dataVersion = parsed.version ?? 0;
+          while (dataVersion < CURRENT_DATA_VERSION) {
+            data = this.migrateData(data, dataVersion);
+            dataVersion = data.version ?? dataVersion + 1;
+          }
+          data.version = CURRENT_DATA_VERSION;
+
           if (parsed.started === undefined) {
             data.started = (parsed.totalXP > 0) || (parsed.seasonHistory && parsed.seasonHistory.length > 0);
           }
@@ -2644,6 +2667,7 @@ class MyRPGLifeApp {
 
   saveData() {
     try {
+      this.data.version = CURRENT_DATA_VERSION;
       localStorage.setItem('myRPGLifeData', JSON.stringify(this.data));
     } catch (error) {
       console.error('Error saving data:', error);
