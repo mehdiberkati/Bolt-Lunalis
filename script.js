@@ -2304,11 +2304,7 @@ class MyRPGLifeApp {
         reader.onload = (e) => {
           try {
             const importedData = JSON.parse(e.target.result);
-            const requiredFields = ['totalXP', 'projects', 'focusSessions'];
-            const isValid =
-              importedData && requiredFields.every((f) => f in importedData);
-
-            if (!isValid) {
+            if (!validateData(importedData)) {
               throw new Error('Invalid data format');
             }
 
@@ -2617,23 +2613,27 @@ class MyRPGLifeApp {
     };
   }
 
+
   loadData() {
     const defaultData = this.getDefaultData();
-    
+
     try {
       const saved = localStorage.getItem('myRPGLifeData');
       if (saved) {
         const parsed = JSON.parse(saved);
-        const data = {
-          ...defaultData,
-          ...parsed,
-          settings: { ...defaultData.settings, ...(parsed.settings || {}) },
-          lastDailyReset: parsed.lastDailyReset || defaultData.lastDailyReset
-        };
-        if (parsed.started === undefined) {
-          data.started = (parsed.totalXP > 0) || (parsed.seasonHistory && parsed.seasonHistory.length > 0);
+        if (validateData(parsed)) {
+          const data = {
+            ...defaultData,
+            ...parsed,
+            settings: { ...defaultData.settings, ...(parsed.settings || {}) },
+            lastDailyReset: parsed.lastDailyReset || defaultData.lastDailyReset
+          };
+          if (parsed.started === undefined) {
+            data.started = (parsed.totalXP > 0) || (parsed.seasonHistory && parsed.seasonHistory.length > 0);
+          }
+          return data;
         }
-        return data;
+        console.warn('Invalid saved data format, using defaults.');
       }
       return defaultData;
     } catch (error) {
