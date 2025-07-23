@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MyRPGLife 3 - Lunalis 🌙</title>
+    <title>Lunalis 🌙</title>
     <link rel="stylesheet" href="styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
@@ -15,8 +15,8 @@
       <!-- Navigation -->
       <nav class="sidebar">
         <div class="logo">
-          <h1>MyRPGLife 3 <span class="logo-icon">✨</span></h1>
-          <span class="subtitle">Lunalis 🌙</span>
+          <h1 class="logo-title" id="logoTitle">Lunalis <span class="logo-icon">✨</span></h1>
+          <span class="subtitle" id="brandName">Lunalis 🌙</span>
         </div>
 
         <div class="nav-menu">
@@ -77,7 +77,7 @@
         <section id="dashboard" class="content-section active">
           <div class="dashboard-grid">
             <!-- Rang et Avatar -->
-            <div class="rank-card">
+            <div class="rank-card" id="rankCard">
               <div class="avatar-container">
                 <div class="avatar" id="userAvatar">🎯</div>
                 <div class="rank-badge" id="rankBadge">E</div>
@@ -259,10 +259,10 @@
             </div>
 
             <!-- Objectif de Saison -->
-            <div class="season-goal">
+            <div class="season-goal" id="seasonGoalBlock">
               <h3>Objectif de Saison</h3>
               <div class="goal-content">
-                <p>Atteindre le rang <strong>Sentinelle de l'Ascension (S)</strong></p>
+                <p id="seasonGoalLabel">Atteindre le rang <strong>Sentinelle de l'Ascension (S)</strong></p>
                 <div class="goal-progress-bar">
                   <div class="goal-progress-fill" id="seasonGoalFill"></div>
                 </div>
@@ -595,9 +595,19 @@
 
     <!-- Écran de démarrage -->
     <div class="start-overlay" id="startOverlay" style="display: none">
-      <button id="startAdventureBtn" class="start-adventure-btn">
-        Commencer l'aventure
-      </button>
+      <div class="start-content">
+        <h2>Choisissez votre objectif de saison</h2>
+        <select id="seasonGoalSelect" class="season-goal-select select-default" data-badge="?">
+          <option value="" disabled selected>Choisis ton rang d’aventurier…</option>
+          <option value="500">Rang A – Le Vétéran (500 XP)</option>
+          <option value="600">Rang S – Sentinelle de l'Ascension (600 XP)</option>
+          <option value="700">Rang SS – Le Paragon du Zénith (700 XP)</option>
+          <option value="750">Rang SSS – Élu du Destin (750 XP)</option>
+        </select>
+        <button id="startAdventureBtn" class="start-adventure-btn" disabled>
+          Commencer l'aventure
+        </button>
+      </div>
     </div>
 
     <!-- Modales -->

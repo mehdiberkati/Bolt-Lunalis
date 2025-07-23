@@ -25,7 +25,7 @@ class MyRPGLifeApp {
 
     this.init();
 
-    if (!this.data.started && this.data.totalXP === 0) {
+    if (!this.data.started) {
       this.showStartOverlay();
     }
   }
@@ -59,6 +59,11 @@ class MyRPGLifeApp {
     const sleepBtn = document.getElementById('sleepBtn');
     if (sleepBtn) {
       sleepBtn.addEventListener('click', () => this.showSleepModal());
+    }
+
+    const rankCard = document.getElementById('rankCard');
+    if (rankCard) {
+      rankCard.addEventListener('click', () => this.showRanksModal());
     }
 
     // Bouton focus principal
@@ -120,6 +125,18 @@ class MyRPGLifeApp {
     const startAdventureBtn = document.getElementById('startAdventureBtn');
     if (startAdventureBtn) {
       startAdventureBtn.addEventListener('click', () => this.startApp());
+    }
+
+    const seasonGoalSelect = document.getElementById('seasonGoalSelect');
+    if (seasonGoalSelect) {
+      seasonGoalSelect.addEventListener('change', (e) => {
+        this.data.seasonGoalXP = parseInt(e.target.value, 10);
+        startAdventureBtn.disabled = !this.data.seasonGoalXP;
+        this.updateSeasonGoalSelectStyle();
+        this.saveData();
+        this.updateDashboard();
+      });
+      this.updateSeasonGoalSelectStyle();
     }
   }
 
@@ -2062,6 +2079,19 @@ class MyRPGLifeApp {
       .join('');
   }
 
+  showRanksModal() {
+    const modalContent = `
+      <div class="modal-header">
+        <h3>Rangs disponibles</h3>
+        <button class="modal-close" onclick="app.closeModal()">×</button>
+      </div>
+      <div class="modal-body ranks-modal">
+        ${this.renderRanksProgression()}
+      </div>
+    `;
+    this.showModal(modalContent, true);
+  }
+
   renderRankProgressBar() {
     const ranks = [
       { name: 'Paumé improductif', xp: 0 },
@@ -2228,6 +2258,21 @@ class MyRPGLifeApp {
 
   changeTheme(theme) {
     document.body.className = `theme-${theme}`;
+    const nameMap = {
+      default: 'Lunalis',
+      fire: 'Solaris',
+      nature: 'Verdalis',
+      cosmic: 'Cosmalis'
+    };
+    const logoTitle = document.getElementById('logoTitle');
+    const brandName = document.getElementById('brandName');
+    if (logoTitle) {
+      logoTitle.innerHTML = `${nameMap[theme] || 'Lunalis'} <span class="logo-icon">✨</span>`;
+    }
+    if (brandName) {
+      const symbols = { default: '🌙', fire: '☀️', nature: '🌿', cosmic: '✨' };
+      brandName.textContent = `${nameMap[theme] || 'Lunalis'} ${symbols[theme] || '🌙'}`;
+    }
     this.data.settings = this.data.settings || {};
     this.data.settings.theme = theme;
     this.showNotification('Thème changé avec succès !', 'success');
@@ -2342,14 +2387,34 @@ class MyRPGLifeApp {
       challengeStatus.textContent = `${this.data.dailyXP}/15 XP`;
     }
 
-    // Update season goal progress toward rank S
+    // Update season goal progress
     const seasonFill = document.getElementById('seasonGoalFill');
     const seasonText = document.getElementById('seasonGoalText');
+    const seasonLabel = document.getElementById('seasonGoalLabel');
+    const seasonBlock = document.getElementById('seasonGoalBlock');
     if (seasonFill && seasonText) {
-      const target = 600;
+      const target = this.data.seasonGoalXP || 600;
       const percent = Math.min(100, (this.data.totalXP / target) * 100);
       seasonFill.style.width = `${percent}%`;
       seasonText.textContent = `${this.data.totalXP} / ${target} XP`;
+      if (seasonBlock) {
+        if (this.data.totalXP >= target) {
+          seasonBlock.classList.add('goal-achieved');
+        } else {
+          seasonBlock.classList.remove('goal-achieved');
+        }
+      }
+    }
+
+    if (seasonLabel) {
+      const ranks = {
+        500: "Le Vétéran (A)",
+        600: "Sentinelle de l'Ascension (S)",
+        700: "Le Paragon du Zénith (SS)",
+        750: "Élu du Destin (SSS)"
+      };
+      const label = ranks[this.data.seasonGoalXP || 600] || "Sentinelle de l'Ascension (S)";
+      seasonLabel.innerHTML = `Atteindre le rang <strong>${label}</strong>`;
     }
 
     this.updateSeasonDisplay();
@@ -2382,6 +2447,12 @@ class MyRPGLifeApp {
     const rankName = document.getElementById('rankName');
     const rankBadge = document.getElementById('rankBadge');
     const userAvatar = document.getElementById('userAvatar');
+    const rankCard = document.getElementById('rankCard');
+
+    if (rankCard) {
+      ['e','d','c','b','a','s','ss','sss'].forEach(b => rankCard.classList.remove(`rank-${b}`));
+      rankCard.classList.add(`rank-${currentRank.badge.toLowerCase()}`);
+    }
     
     if (rankName) rankName.textContent = currentRank.name;
     if (rankBadge) rankBadge.textContent = currentRank.badge;
@@ -2527,6 +2598,7 @@ class MyRPGLifeApp {
       xpHistory: [],
       achievements: [],
       weeklyReviews: [],
+      seasonGoalXP: null,
       settings: {
         theme: 'default',
         soundNotifications: true,
@@ -2619,6 +2691,15 @@ class MyRPGLifeApp {
 
   showStartOverlay() {
     const overlay = document.getElementById('startOverlay');
+    const startBtn = document.getElementById('startAdventureBtn');
+    const select = document.getElementById('seasonGoalSelect');
+    if (select) {
+      select.value = this.data.seasonGoalXP || '';
+      this.updateSeasonGoalSelectStyle();
+    }
+    if (startBtn) {
+      startBtn.disabled = !this.data.seasonGoalXP;
+    }
     if (overlay) overlay.style.display = 'flex';
   }
 
@@ -2631,7 +2712,43 @@ class MyRPGLifeApp {
     }, 500);
   }
 
+  updateSeasonGoalSelectStyle() {
+    const select = document.getElementById('seasonGoalSelect');
+    if (!select) return;
+    select.classList.remove(
+      'select-rank-a',
+      'select-rank-s',
+      'select-rank-ss',
+      'select-rank-sss',
+      'select-default'
+    );
+    const value = select.value;
+    const clsMap = {
+      500: 'select-rank-a',
+      600: 'select-rank-s',
+      700: 'select-rank-ss',
+      750: 'select-rank-sss'
+    };
+    const badgeMap = {
+      500: 'A',
+      600: 'S',
+      700: 'SS',
+      750: 'SSS'
+    };
+    if (clsMap[value]) {
+      select.classList.add(clsMap[value]);
+      select.dataset.badge = badgeMap[value];
+    } else {
+      select.classList.add('select-default');
+      select.dataset.badge = '?';
+    }
+  }
+
   startApp() {
+    if (!this.data.seasonGoalXP) {
+      this.showNotification('Veuillez choisir un objectif de saison.', 'error');
+      return;
+    }
     this.data.started = true;
     this.data.seasonNumber = this.data.seasonHistory.length + 1;
     this.data.seasonStartDate = new Date().toISOString();

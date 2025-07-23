@@ -61,7 +61,7 @@ body {
   position: relative;
 }
 
-.logo h1 {
+.logo-title {
   font-family: 'Orbitron', monospace;
   font-size: 1.5rem;
   font-weight: 900;
@@ -286,6 +286,11 @@ body {
 .daily-xp {
   color: var(--text-secondary);
   font-size: 0.95rem;
+}
+.daily-xp span {
+  font-size: 1.2rem;
+  color: var(--accent-color);
+  font-weight: 600;
 }
 .season-bar {
   width: 100%;
@@ -657,12 +662,35 @@ body {
   gap: 1rem;
   font-size: 1.2rem;
   font-weight: 600;
+  position: relative;
+  overflow: hidden;
 }
 
 .focus-start-btn:hover {
   border-color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.1);
   transform: scale(1.02);
+}
+
+.focus-start-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 20px var(--primary-color);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.focus-start-btn:hover::before {
+  opacity: 1;
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 20px var(--primary-color); }
+  50% { box-shadow: 0 0 40px var(--secondary-color); }
+ 100% { box-shadow: 0 0 20px var(--primary-color); }
 }
 
 .focus-icon {
@@ -1228,6 +1256,15 @@ body {
   width: 0%;
 }
 
+.goal-achieved .goal-progress-fill {
+  background: var(--success-color-bright);
+}
+
+.goal-achieved .goal-progress-text {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
 .goal-progress-text {
   font-size: 0.9rem;
   margin-top: 0.3rem;
@@ -1625,13 +1662,101 @@ body {
 }
 
 .start-adventure-btn {
-  padding: 1rem 2rem;
-  font-size: 1.5rem;
+  padding: 1rem 2.5rem;
+  font-size: 1.3rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--gradient-primary);
   color: white;
   cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-adventure-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--primary-color);
+}
+
+.start-content {
+  background: var(--card-bg);
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+  text-align: center;
+}
+
+.season-goal-select {
+  padding: 0.6rem 2.5rem 0.6rem 3rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s, border-color 0.3s;
+  appearance: none;
+  position: relative;
+}
+
+.season-goal-select:hover {
+  box-shadow: 0 0 10px var(--primary-color);
+}
+
+.season-goal-select::after {
+  content: '\25BC';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-secondary);
+}
+
+.season-goal-select::before {
+  content: attr(data-badge);
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.select-default::before {
+  background: var(--border-color);
+}
+
+.select-rank-a::before {
+  background: linear-gradient(45deg, #7c3aed, #c084fc);
+}
+
+.select-rank-s::before {
+  background: linear-gradient(45deg, #f59e0b, #fbbf24);
+}
+
+.select-rank-ss::before {
+  background: linear-gradient(45deg, #ec4899, #f472b6);
+}
+
+.select-rank-sss::before {
+  background: linear-gradient(45deg, #d97706, #facc15, #ef4444);
+}
+
+.season-goal.goal-achieved {
+  background: var(--success-color-dark);
+  border-color: var(--success-color-bright);
 }
 
 .modal {
@@ -1699,6 +1824,14 @@ body {
 
 .modal-body {
   padding: 1.5rem;
+}
+
+.ranks-modal {
+  max-height: 60vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .break-body {
