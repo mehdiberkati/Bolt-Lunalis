@@ -259,10 +259,10 @@
             </div>
 
             <!-- Objectif de Saison -->
-            <div class="season-goal">
+            <div class="season-goal" id="seasonGoalBlock">
               <h3>Objectif de Saison</h3>
               <div class="goal-content">
-                <p>Atteindre le rang <strong>Sentinelle de l'Ascension (S)</strong></p>
+                <p id="seasonGoalLabel">Atteindre le rang <strong>Sentinelle de l'Ascension (S)</strong></p>
                 <div class="goal-progress-bar">
                   <div class="goal-progress-fill" id="seasonGoalFill"></div>
                 </div>
@@ -595,9 +595,19 @@
 
     <!-- Écran de démarrage -->
     <div class="start-overlay" id="startOverlay" style="display: none">
-      <button id="startAdventureBtn" class="start-adventure-btn">
-        Commencer l'aventure
-      </button>
+      <div class="start-content">
+        <h2>Choisissez votre objectif de saison</h2>
+        <select id="seasonGoalSelect" class="season-goal-select">
+          <option value="" disabled selected>Sélectionnez un rang...</option>
+          <option value="500">Rang A – Le Vétéran (500 XP)</option>
+          <option value="600">Rang S – Sentinelle de l'Ascension (600 XP)</option>
+          <option value="700">Rang SS – Le Paragon du Zénith (700 XP)</option>
+          <option value="750">Rang SSS – Élu du Destin (750 XP)</option>
+        </select>
+        <button id="startAdventureBtn" class="start-adventure-btn" disabled>
+          Commencer l'aventure
+        </button>
+      </div>
     </div>
 
     <!-- Modales -->

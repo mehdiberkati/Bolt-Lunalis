@@ -84,9 +84,10 @@ Application immersive de gamification pour booster la productivité et la discip
 ### Démarrage Rapide
 
 1. Ouvrir `index.html` dans un navigateur
-2. Créer vos premiers projets
-3. Lancer une session de focus
-4. Suivre votre progression quotidienne
+2. Choisir un objectif de saison pour débloquer le bouton **Commencer l'aventure**
+3. Créer vos premiers projets
+4. Lancer une session de focus
+5. Suivre votre progression quotidienne
 
 ### Navigation
 
@@ -186,6 +187,19 @@ Pour visualiser les différents designs de rang sur le dashboard, vous pouvez mo
    app.saveData();
    ```
 3. Recommencez avec d'autres valeurs (0, 200, 300, … 750) pour tester chaque rang et découvrir leur style.
+
+### Tester la validation de l'objectif de saison
+
+Vous pouvez aussi modifier l'objectif ou le remplir manuellement :
+
+1. Dans la console :
+   ```js
+   app.data.seasonGoalXP = 500; // objectif rang A
+   app.data.totalXP = 500; // valider l'objectif
+   app.updateUI();
+   app.saveData();
+   ```
+2. Le bloc **Objectif de Saison** passe alors en vert.
 
 ## 🎯 Objectifs de Performance
 

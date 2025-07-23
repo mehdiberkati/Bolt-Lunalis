@@ -1256,6 +1256,15 @@ body {
   width: 0%;
 }
 
+.goal-achieved .goal-progress-fill {
+  background: var(--success-color-bright);
+}
+
+.goal-achieved .goal-progress-text {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
 .goal-progress-text {
   font-size: 0.9rem;
   margin-top: 0.3rem;
@@ -1653,13 +1662,46 @@ body {
 }
 
 .start-adventure-btn {
-  padding: 1rem 2rem;
-  font-size: 1.5rem;
+  padding: 1rem 2.5rem;
+  font-size: 1.3rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--gradient-primary);
   color: white;
   cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-adventure-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--primary-color);
+}
+
+.start-content {
+  background: var(--card-bg);
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+  text-align: center;
+}
+
+.season-goal-select {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+}
+
+.season-goal.goal-achieved {
+  background: var(--success-color-dark);
+  border-color: var(--success-color-bright);
 }
 
 .modal {

@@ -25,7 +25,7 @@ class MyRPGLifeApp {
 
     this.init();
 
-    if (!this.data.started && this.data.totalXP === 0) {
+    if (!this.data.started) {
       this.showStartOverlay();
     }
   }
@@ -125,6 +125,16 @@ class MyRPGLifeApp {
     const startAdventureBtn = document.getElementById('startAdventureBtn');
     if (startAdventureBtn) {
       startAdventureBtn.addEventListener('click', () => this.startApp());
+    }
+
+    const seasonGoalSelect = document.getElementById('seasonGoalSelect');
+    if (seasonGoalSelect) {
+      seasonGoalSelect.addEventListener('change', (e) => {
+        this.data.seasonGoalXP = parseInt(e.target.value, 10);
+        startAdventureBtn.disabled = !this.data.seasonGoalXP;
+        this.saveData();
+        this.updateDashboard();
+      });
     }
   }
 
@@ -2375,14 +2385,34 @@ class MyRPGLifeApp {
       challengeStatus.textContent = `${this.data.dailyXP}/15 XP`;
     }
 
-    // Update season goal progress toward rank S
+    // Update season goal progress
     const seasonFill = document.getElementById('seasonGoalFill');
     const seasonText = document.getElementById('seasonGoalText');
+    const seasonLabel = document.getElementById('seasonGoalLabel');
+    const seasonBlock = document.getElementById('seasonGoalBlock');
     if (seasonFill && seasonText) {
-      const target = 600;
+      const target = this.data.seasonGoalXP || 600;
       const percent = Math.min(100, (this.data.totalXP / target) * 100);
       seasonFill.style.width = `${percent}%`;
       seasonText.textContent = `${this.data.totalXP} / ${target} XP`;
+      if (seasonBlock) {
+        if (this.data.totalXP >= target) {
+          seasonBlock.classList.add('goal-achieved');
+        } else {
+          seasonBlock.classList.remove('goal-achieved');
+        }
+      }
+    }
+
+    if (seasonLabel) {
+      const ranks = {
+        500: "Le Vétéran (A)",
+        600: "Sentinelle de l'Ascension (S)",
+        700: "Le Paragon du Zénith (SS)",
+        750: "Élu du Destin (SSS)"
+      };
+      const label = ranks[this.data.seasonGoalXP || 600] || "Sentinelle de l'Ascension (S)";
+      seasonLabel.innerHTML = `Atteindre le rang <strong>${label}</strong>`;
     }
 
     this.updateSeasonDisplay();
@@ -2566,6 +2596,7 @@ class MyRPGLifeApp {
       xpHistory: [],
       achievements: [],
       weeklyReviews: [],
+      seasonGoalXP: null,
       settings: {
         theme: 'default',
         soundNotifications: true,
@@ -2658,6 +2689,14 @@ class MyRPGLifeApp {
 
   showStartOverlay() {
     const overlay = document.getElementById('startOverlay');
+    const startBtn = document.getElementById('startAdventureBtn');
+    const select = document.getElementById('seasonGoalSelect');
+    if (select) {
+      select.value = this.data.seasonGoalXP || '';
+    }
+    if (startBtn) {
+      startBtn.disabled = !this.data.seasonGoalXP;
+    }
     if (overlay) overlay.style.display = 'flex';
   }
 
@@ -2671,6 +2710,10 @@ class MyRPGLifeApp {
   }
 
   startApp() {
+    if (!this.data.seasonGoalXP) {
+      this.showNotification('Veuillez choisir un objectif de saison.', 'error');
+      return;
+    }
     this.data.started = true;
     this.data.seasonNumber = this.data.seasonHistory.length + 1;
     this.data.seasonStartDate = new Date().toISOString();
