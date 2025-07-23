@@ -12,6 +12,7 @@ function validateData(data) {
     return false;
   }
   if (typeof data.totalXP !== 'number') return false;
+  if (data.version !== undefined && typeof data.version !== 'number') return false;
   return true;
 }
 
