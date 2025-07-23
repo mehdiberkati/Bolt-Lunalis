@@ -14,7 +14,7 @@ function calculateIntensityRate(weeklyScores) {
 
 function getIntensityLabel(rate, intensityLevels) {
   const level = intensityLevels.find((l) => rate >= l.min && rate <= l.max);
-  return level ? level.label : 'Errant du Néant';
+  return level ? `${level.emoji} ${level.title}` : 'Errant du Néant';
 }
 
 module.exports = {

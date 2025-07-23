@@ -1,5 +1,69 @@
 const CURRENT_DATA_VERSION = 1;
 
+// Intensity levels used to display the progress bar and labels
+const INTENSITY_LEVELS = [
+  {
+    min: 0,
+    max: 39,
+    emoji: '👤',
+    title: 'Errant du Néant',
+    role: 'Déserteur',
+    description:
+      "Tu n\u2019es pas encore dans le Game. Tu fuis tes missions, tu manques de régularité et d\u2019effort soutenu. Rien n\u2019est encore vraiment enclenché.",
+    color: 'linear-gradient(#666,#000)'
+  },
+  {
+    min: 40,
+    max: 59,
+    emoji: '⚖️',
+    title: 'Survivant',
+    role: 'Inconstant',
+    description:
+      "Tu fais le strict minimum. Tu es plus dans la réaction que dans l\u2019action. Tu avances à petits pas, mais sans vraie direction ou maîtrise.",
+    color: '#16a34a'
+  },
+  {
+    min: 60,
+    max: 74,
+    emoji: '🔥',
+    title: 'Forgeron de Volonté',
+    role: 'Bâtisseur Stable',
+    description:
+      "Tu commences à structurer, à créer une base solide. Tu avances, tu construis, mais tu t\u2019arrêtes parfois en chemin. Il manque encore de la régularité.",
+    color: '#f97316'
+  },
+  {
+    min: 75,
+    max: 84,
+    emoji: '💎',
+    title: 'Artisan du Focus',
+    role: 'Fort & cohérent',
+    description:
+      "Tu produis régulièrement, tu tiens tes engagements. Tu gagnes du terrain, tu consolides ton système. La constance commence à porter ses fruits.",
+    color: 'linear-gradient(#0911b0,#7408c7)'
+  },
+  {
+    min: 85,
+    max: 94,
+    emoji: '⚔️',
+    title: 'Champion du Flow',
+    role: 'Leader Ultra discipliné',
+    description:
+      "Tu incarnes la discipline et la constance. Tu avances avec puissance, tu es fiable et tu inspires ceux qui t\u2019observent. Ton momentum est fort.",
+    color: '#dc2626'
+  },
+  {
+    min: 95,
+    max: 100,
+    emoji: '🌌',
+    title: 'Transcendant',
+    role: 'Maître',
+    description:
+      "Tu exploses tous tes objectifs. Tu es en pleine fusion avec ta mission. Rien ne peut t\u2019arrêter : tu es aligné, focus, inarrêtable.",
+    color: 'linear-gradient(#8a2387,#e94057,#f27121)'
+  }
+];
+
 class MyRPGLifeApp {
     constructor() {
     this.data = this.loadData();
@@ -66,6 +130,11 @@ class MyRPGLifeApp {
     const rankCard = document.getElementById('rankCard');
     if (rankCard) {
       rankCard.addEventListener('click', () => this.showRanksModal());
+    }
+
+    const intensityCard = document.querySelector('.intensity-card');
+    if (intensityCard) {
+      intensityCard.addEventListener('click', () => this.showIntensityModal());
     }
 
     // Bouton focus principal
@@ -2095,6 +2164,30 @@ class MyRPGLifeApp {
     this.showModal(modalContent, true);
   }
 
+  showIntensityModal() {
+    const levelsHtml = INTENSITY_LEVELS.map(l => `
+      <div class="intensity-level">
+        <span class="level-color" style="background:${l.color}"></span>
+        <div class="level-info">
+          <div class="level-title">${l.emoji} ${l.title} (${l.min}-${l.max}%)</div>
+          <div class="level-role">Rôle : ${l.role}</div>
+          <div class="level-desc">${l.description}</div>
+        </div>
+      </div>
+    `).join('');
+
+    const modalContent = `
+      <div class="modal-header">
+        <h3>Niveaux d'Intensité</h3>
+        <button class="modal-close" onclick="app.closeModal()">×</button>
+      </div>
+      <div class="modal-body intensity-modal">
+        ${levelsHtml}
+      </div>
+    `;
+    this.showModal(modalContent, true);
+  }
+
   renderRankProgressBar() {
     const ranks = [
       { name: 'Paumé improductif', xp: 0 },
@@ -2424,6 +2517,8 @@ class MyRPGLifeApp {
       const label = ranks[this.data.seasonGoalXP || 600] || "Sentinelle de l'Ascension (S)";
       seasonLabel.innerHTML = `Atteindre le rang <strong>${label}</strong>`;
     }
+
+    this.updateIntensityDisplay();
 
     this.updateSeasonDisplay();
     this.updateLastSeasonDisplay();
@@ -2812,6 +2907,27 @@ class MyRPGLifeApp {
       const percent = Math.min(100, (diffDays / 42) * 100);
       seasonFill.style.width = `${percent}%`;
       seasonFill.classList.toggle('ending', remaining <= 7);
+    }
+  }
+
+  updateIntensityDisplay() {
+    const rate = this.calculateIntensityRate();
+    const valueEl = document.getElementById('intensityValue');
+    const labelEl = document.getElementById('intensityLabel');
+    const fillEl = document.getElementById('intensityFill');
+
+    if (!valueEl || !labelEl || !fillEl) return;
+
+    const level = INTENSITY_LEVELS.find(l => rate >= l.min && rate <= l.max) || INTENSITY_LEVELS[0];
+    valueEl.textContent = `${rate}%`;
+    labelEl.textContent = `${level.emoji} ${level.title}`;
+    fillEl.style.width = `${Math.min(rate, 100)}%`;
+    fillEl.style.background = level.color;
+    valueEl.style.color = level.color.includes('gradient') ? '#ffff66' : level.color;
+    if (rate >= 95) {
+      valueEl.classList.add('intensity-glow');
+    } else {
+      valueEl.classList.remove('intensity-glow');
     }
   }
 

@@ -189,12 +189,16 @@ body {
   overflow: hidden;
 }
 
-.rank-card:hover, .xp-card:hover, .season-card:hover, 
-.intensity-card:hover, .daily-actions:hover, 
+.rank-card:hover, .xp-card:hover, .season-card:hover,
+.intensity-card:hover, .daily-actions:hover,
 .focus-cta:hover, .season-goal:hover, .streak-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
   border-color: var(--primary-color);
+}
+
+.intensity-card {
+  cursor: pointer;
 }
 
 /* Rang et Avatar */
@@ -3607,6 +3611,53 @@ select:focus {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.intensity-glow {
+  animation: intensityGlow 2s ease-in-out infinite;
+}
+
+.intensity-modal {
+  max-height: 60vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.intensity-level {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.level-color {
+  width: 24px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.level-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-title {
+  font-weight: bold;
+}
+
+.level-desc {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+@keyframes intensityGlow {
+  0%, 100% {
+    text-shadow: 0 0 0 rgba(255, 255, 102, 0);
+  }
+  50% {
+    text-shadow: 0 0 8px rgba(255, 255, 102, 1);
   }
 }
 
