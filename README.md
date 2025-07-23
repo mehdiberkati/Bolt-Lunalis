@@ -1,4 +1,4 @@
-# MyRPGLife 3 - Lunalis 🌙
+# Lunalis 🌙
 
 ## Description
 
@@ -173,6 +173,19 @@ Application immersive de gamification pour booster la productivité et la discip
 2. Générez l'application avec `npm run package-win`.
 3. L'exécutable se trouve dans `release/Lunalis-win32-x64/Lunalis.exe`.
    Vous pouvez le lancer directement sans passer par `npm start`.
+
+### Tester les styles de rang
+
+Pour visualiser les différents designs de rang sur le dashboard, vous pouvez modifier temporairement votre total d'XP directement depuis la console du navigateur :
+
+1. Ouvrez l'application et appuyez sur `F12` pour ouvrir les outils de développement.
+2. Dans l'onglet **Console**, entrez par exemple :
+   ```js
+   app.data.totalXP = 600; // applique le rang S
+   app.updateUI();
+   app.saveData();
+   ```
+3. Recommencez avec d'autres valeurs (0, 200, 300, … 750) pour tester chaque rang et découvrir leur style.
 
 ## 🎯 Objectifs de Performance
 

@@ -61,6 +61,11 @@ class MyRPGLifeApp {
       sleepBtn.addEventListener('click', () => this.showSleepModal());
     }
 
+    const rankCard = document.getElementById('rankCard');
+    if (rankCard) {
+      rankCard.addEventListener('click', () => this.showRanksModal());
+    }
+
     // Bouton focus principal
     const focusStartBtn = document.getElementById('focusStartBtn');
     if (focusStartBtn) {
@@ -2062,6 +2067,19 @@ class MyRPGLifeApp {
       .join('');
   }
 
+  showRanksModal() {
+    const modalContent = `
+      <div class="modal-header">
+        <h3>Rangs disponibles</h3>
+        <button class="modal-close" onclick="app.closeModal()">×</button>
+      </div>
+      <div class="modal-body ranks-modal">
+        ${this.renderRanksProgression()}
+      </div>
+    `;
+    this.showModal(modalContent, true);
+  }
+
   renderRankProgressBar() {
     const ranks = [
       { name: 'Paumé improductif', xp: 0 },
@@ -2228,6 +2246,21 @@ class MyRPGLifeApp {
 
   changeTheme(theme) {
     document.body.className = `theme-${theme}`;
+    const nameMap = {
+      default: 'Lunalis',
+      fire: 'Solaris',
+      nature: 'Verdalis',
+      cosmic: 'Cosmalis'
+    };
+    const logoTitle = document.getElementById('logoTitle');
+    const brandName = document.getElementById('brandName');
+    if (logoTitle) {
+      logoTitle.innerHTML = `${nameMap[theme] || 'Lunalis'} <span class="logo-icon">✨</span>`;
+    }
+    if (brandName) {
+      const symbols = { default: '🌙', fire: '☀️', nature: '🌿', cosmic: '✨' };
+      brandName.textContent = `${nameMap[theme] || 'Lunalis'} ${symbols[theme] || '🌙'}`;
+    }
     this.data.settings = this.data.settings || {};
     this.data.settings.theme = theme;
     this.showNotification('Thème changé avec succès !', 'success');
@@ -2382,6 +2415,12 @@ class MyRPGLifeApp {
     const rankName = document.getElementById('rankName');
     const rankBadge = document.getElementById('rankBadge');
     const userAvatar = document.getElementById('userAvatar');
+    const rankCard = document.getElementById('rankCard');
+
+    if (rankCard) {
+      ['e','d','c','b','a','s','ss','sss'].forEach(b => rankCard.classList.remove(`rank-${b}`));
+      rankCard.classList.add(`rank-${currentRank.badge.toLowerCase()}`);
+    }
     
     if (rankName) rankName.textContent = currentRank.name;
     if (rankBadge) rankBadge.textContent = currentRank.badge;
