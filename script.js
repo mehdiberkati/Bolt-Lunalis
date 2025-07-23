@@ -197,6 +197,7 @@ class MyRPGLifeApp {
     } else {
       this.showNotification('Sport déjà enregistré aujourd\'hui', 'info');
     }
+    this.saveData();
   }
 
   showSleepModal() {
@@ -278,6 +279,7 @@ class MyRPGLifeApp {
       this.showNotification('Sommeil déjà enregistré aujourd\'hui', 'info');
       this.closeModal();
     }
+    this.saveData();
   }
 
   showDistractionModal() {
@@ -341,6 +343,7 @@ class MyRPGLifeApp {
     this.showNotification(message, 'error');
     this.closeModal();
     this.updateUI();
+    this.saveData();
   }
 
   // Timer functions
@@ -2673,6 +2676,7 @@ class MyRPGLifeApp {
     this.addXP(5, 'Coffre Mystique - Récompense Sûre');
     this.showNotification('✨ +5 XP de récompense sûre !', 'success');
     this.hideDoubleOrNothingChest();
+    this.saveData();
   }
 
   chooseDoubleOrNothing() {
@@ -2685,6 +2689,7 @@ class MyRPGLifeApp {
     // Set up tomorrow's challenge
     this.data.doubleOrNothingActive = true;
     this.showNotification('🔥 Défi accepté ! Bonne chance demain !', 'warning');
+    this.saveData();
   }
 
   showStartOverlay() {
