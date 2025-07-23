@@ -208,8 +208,8 @@ body {
   position: absolute;
   inset: 0;
   background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
-  transform: translateX(-100%);
-  animation: cardShimmer 6s linear infinite;
+  background-size: 200% 100%;
+  animation: cardShimmerMove 6s linear infinite;
 }
 
 /* Rang et Avatar */
@@ -446,17 +446,15 @@ body {
 .challenge-fill::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
-  animation: shimmer 2s infinite;
+  background-size: 200% 100%;
+  animation: challengeShimmer 3s linear infinite;
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes challengeShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .challenge-status {
@@ -778,9 +776,9 @@ body {
   100% { background-position: -200% 0; }
 }
 
-@keyframes cardShimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes cardShimmerMove {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* Carte de la saison pr\E9c\E9dente */
@@ -3662,19 +3660,19 @@ select:focus {
 }
 
 .intensity-level {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--level-bg, rgba(0, 0, 0, 0.4));
   padding: 0.75rem 1rem;
   border-radius: 8px;
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #fff;
+  box-shadow: 0 0 10px var(--level-glow, rgba(255,255,255,0.2));
+  border: 1px solid var(--level-glow, transparent);
 }
 
 .level-color {
-  width: 30px;
-  height: 14px;
-  border-radius: 4px;
-  box-shadow: 0 0 6px rgba(255,255,255,0.3);
+  display: none;
 }
 
 .level-info {

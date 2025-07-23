@@ -2185,16 +2185,19 @@ class MyRPGLifeApp {
   }
 
   showIntensityModal() {
-    const levelsHtml = INTENSITY_LEVELS.map(l => `
-      <div class="intensity-level">
-        <span class="level-color" style="background:${l.color}"></span>
-        <div class="level-info">
-          <div class="level-title">${l.emoji} ${l.title} (${l.min}-${l.max}%)</div>
-          <div class="level-role">Rôle : ${l.role}</div>
-          <div class="level-desc">${l.description}</div>
+    const levelsHtml = INTENSITY_LEVELS.map(l => {
+      const base = extractBaseColor(l.color);
+      const glow = lightenColor(base, 30);
+      return `
+        <div class="intensity-level" style="--level-bg:${l.color};--level-glow:${glow}">
+          <div class="level-info">
+            <div class="level-title">${l.emoji} ${l.title} (${l.min}-${l.max}%)</div>
+            <div class="level-role">Rôle : ${l.role}</div>
+            <div class="level-desc">${l.description}</div>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     const modalContent = `
       <div class="modal-header">
@@ -2951,6 +2954,7 @@ class MyRPGLifeApp {
     const light = lightenColor(base, 30);
     card.style.setProperty('--intensity-color', base);
     fillEl.style.boxShadow = `0 0 10px ${light}`;
+    card.style.boxShadow = `0 0 15px ${light}`;
     valueEl.style.color = base;
 
     if (rate >= 85) {
