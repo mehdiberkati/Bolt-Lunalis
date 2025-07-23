@@ -1692,11 +1692,66 @@ body {
 }
 
 .season-goal-select {
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
+  padding: 0.6rem 2.5rem 0.6rem 3rem;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
   background: var(--secondary-bg);
   color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s, border-color 0.3s;
+  appearance: none;
+  position: relative;
+}
+
+.season-goal-select:hover {
+  box-shadow: 0 0 10px var(--primary-color);
+}
+
+.season-goal-select::after {
+  content: '\25BC';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-secondary);
+}
+
+.season-goal-select::before {
+  content: attr(data-badge);
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.select-default::before {
+  background: var(--border-color);
+}
+
+.select-rank-a::before {
+  background: linear-gradient(45deg, #7c3aed, #c084fc);
+}
+
+.select-rank-s::before {
+  background: linear-gradient(45deg, #f59e0b, #fbbf24);
+}
+
+.select-rank-ss::before {
+  background: linear-gradient(45deg, #ec4899, #f472b6);
+}
+
+.select-rank-sss::before {
+  background: linear-gradient(45deg, #d97706, #facc15, #ef4444);
 }
 
 .season-goal.goal-achieved {

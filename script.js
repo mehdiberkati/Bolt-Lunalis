@@ -132,9 +132,11 @@ class MyRPGLifeApp {
       seasonGoalSelect.addEventListener('change', (e) => {
         this.data.seasonGoalXP = parseInt(e.target.value, 10);
         startAdventureBtn.disabled = !this.data.seasonGoalXP;
+        this.updateSeasonGoalSelectStyle();
         this.saveData();
         this.updateDashboard();
       });
+      this.updateSeasonGoalSelectStyle();
     }
   }
 
@@ -2693,6 +2695,7 @@ class MyRPGLifeApp {
     const select = document.getElementById('seasonGoalSelect');
     if (select) {
       select.value = this.data.seasonGoalXP || '';
+      this.updateSeasonGoalSelectStyle();
     }
     if (startBtn) {
       startBtn.disabled = !this.data.seasonGoalXP;
@@ -2707,6 +2710,38 @@ class MyRPGLifeApp {
       if (overlay) overlay.style.display = 'none';
       if (overlay) overlay.classList.remove('fade-out');
     }, 500);
+  }
+
+  updateSeasonGoalSelectStyle() {
+    const select = document.getElementById('seasonGoalSelect');
+    if (!select) return;
+    select.classList.remove(
+      'select-rank-a',
+      'select-rank-s',
+      'select-rank-ss',
+      'select-rank-sss',
+      'select-default'
+    );
+    const value = select.value;
+    const clsMap = {
+      500: 'select-rank-a',
+      600: 'select-rank-s',
+      700: 'select-rank-ss',
+      750: 'select-rank-sss'
+    };
+    const badgeMap = {
+      500: 'A',
+      600: 'S',
+      700: 'SS',
+      750: 'SSS'
+    };
+    if (clsMap[value]) {
+      select.classList.add(clsMap[value]);
+      select.dataset.badge = badgeMap[value];
+    } else {
+      select.classList.add('select-default');
+      select.dataset.badge = '?';
+    }
   }
 
   startApp() {
