@@ -431,6 +431,8 @@ body {
   margin-bottom: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  --progress: 0%;
 }
 
 .challenge-fill {
@@ -443,13 +445,17 @@ body {
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
 }
 
-.challenge-fill::after {
+.challenge-bar::after {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: var(--progress, 0%);
+  width: calc(100% - var(--progress, 0%));
   background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: challengeShimmer 3s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes challengeShimmer {
@@ -3660,19 +3666,34 @@ select:focus {
 }
 
 .intensity-level {
-  background: var(--level-bg, rgba(0, 0, 0, 0.4));
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 1rem;
   color: #fff;
-  box-shadow: 0 0 10px var(--level-glow, rgba(255,255,255,0.2));
-  border: 1px solid var(--level-glow, transparent);
+  box-shadow: 0 0 10px var(--level-glow, rgba(255,255,255,0.15));
 }
 
-.level-color {
-  display: none;
+.intensity-level::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  background: var(--level-color, var(--accent-color));
+  border-radius: 8px 0 0 8px;
+}
+
+
+.level-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .level-info {
@@ -3682,12 +3703,19 @@ select:focus {
 
 
 .level-title {
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.level-role {
+  color: var(--level-color, var(--accent-color));
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .level-desc {
   font-size: 0.85rem;
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 @keyframes intensityGlow {

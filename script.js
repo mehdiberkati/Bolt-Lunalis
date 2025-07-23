@@ -2189,10 +2189,11 @@ class MyRPGLifeApp {
       const base = extractBaseColor(l.color);
       const glow = lightenColor(base, 30);
       return `
-        <div class="intensity-level" style="--level-bg:${l.color};--level-glow:${glow}">
+        <div class="intensity-level" style="--level-color:${base};--level-glow:${glow}">
+          <div class="level-icon">${l.emoji}</div>
           <div class="level-info">
-            <div class="level-title">${l.emoji} ${l.title} (${l.min}-${l.max}%)</div>
-            <div class="level-role">Rôle : ${l.role}</div>
+            <div class="level-title">${l.title} (${l.min}-${l.max}%)</div>
+            <div class="level-role">${l.role}</div>
             <div class="level-desc">${l.description}</div>
           </div>
         </div>
@@ -2504,11 +2505,15 @@ class MyRPGLifeApp {
     // Update challenge progress
     const challengeFill = document.getElementById('challengeFill');
     const challengeStatus = document.getElementById('challengeStatus');
+    const challengeBar = document.getElementById('challengeBar');
     
     if (challengeFill && challengeStatus) {
       const progress = Math.min(100, (this.data.dailyXP / 15) * 100);
       challengeFill.style.width = `${progress}%`;
       challengeStatus.textContent = `${this.data.dailyXP}/15 XP`;
+      if (challengeBar) {
+        challengeBar.style.setProperty('--progress', `${progress}%`);
+      }
     }
 
     // Update season goal progress
