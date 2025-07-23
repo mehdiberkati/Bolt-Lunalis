@@ -136,6 +136,7 @@ Application immersive de gamification pour booster la productivité et la discip
 - Export/import des données disponible
 - Sauvegarde toutes les 30 secondes
 - Synchronisation multi-appareils via IndexedDB ou backend (à venir)
+- Tokens OAuth sauvegardés chiffrés dans le dossier utilisateur
 
 ## 🔧 Configuration Technique
 
@@ -143,6 +144,7 @@ Application immersive de gamification pour booster la productivité et la discip
 - **Stockage**: LocalStorage
 - **Compatibilité**: Navigateurs modernes
 - **Responsive**: Optimisé pour PC
+- **Sécurité**: Tokens chiffrés avec une clé dérivée de l'utilisateur
 
 ### Lancer l'application Electron
 

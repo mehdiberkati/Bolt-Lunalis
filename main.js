@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+const os = require('os');
 const { google } = require('googleapis');
 
 const SPOTIFY_CLIENT_ID = '23351c09e9314ed39a04c0cee74b30db';
@@ -16,19 +18,46 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const SPOTIFY_TOKEN_PATH = path.join(app.getPath('userData'), 'spotify_token.json');
 
 const TOKEN_PATH = path.join(app.getPath('userData'), 'google_token.json');
+
+// Encryption helpers
+const ENC_KEY = crypto
+  .createHash('sha256')
+  .update(os.userInfo().username + app.getPath('userData'))
+  .digest();
+
+function encrypt(text) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', ENC_KEY, iv);
+  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return Buffer.concat([iv, tag, encrypted]).toString('base64');
+}
+
+function decrypt(text) {
+  const data = Buffer.from(text, 'base64');
+  const iv = data.slice(0, 12);
+  const tag = data.slice(12, 28);
+  const encrypted = data.slice(28);
+  const decipher = crypto.createDecipheriv('aes-256-gcm', ENC_KEY, iv);
+  decipher.setAuthTag(tag);
+  const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+  return decrypted.toString('utf8');
+}
 let oauth2Client;
 
 // Spotify OAuth helpers
 function getSpotifyToken() {
   try {
-    return JSON.parse(fs.readFileSync(SPOTIFY_TOKEN_PATH, 'utf8'));
+    const encrypted = fs.readFileSync(SPOTIFY_TOKEN_PATH, 'utf8');
+    return JSON.parse(decrypt(encrypted));
   } catch {
     return null;
   }
 }
 
 function saveSpotifyToken(data) {
-  fs.writeFileSync(SPOTIFY_TOKEN_PATH, JSON.stringify(data));
+  const encrypted = encrypt(JSON.stringify(data));
+  fs.writeFileSync(SPOTIFY_TOKEN_PATH, encrypted);
 }
 
 async function refreshSpotifyToken(refreshToken) {
@@ -197,12 +226,26 @@ function createWindow() {
   win.setMenuBarVisibility(false);
 }
 
+function loadGoogleToken() {
+  try {
+    const encrypted = fs.readFileSync(TOKEN_PATH, 'utf8');
+    return JSON.parse(decrypt(encrypted));
+  } catch {
+    return null;
+  }
+}
+
+function saveGoogleToken(tokens) {
+  const encrypted = encrypt(JSON.stringify(tokens));
+  fs.writeFileSync(TOKEN_PATH, encrypted);
+}
+
 function getOAuthClient() {
   if (oauth2Client) return oauth2Client;
   oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
   try {
-    const token = fs.readFileSync(TOKEN_PATH, 'utf8');
-    oauth2Client.setCredentials(JSON.parse(token));
+    const tokenData = loadGoogleToken();
+    if (tokenData) oauth2Client.setCredentials(tokenData);
   } catch (err) {
     // no saved token
   }
@@ -232,7 +275,7 @@ async function authenticateWithGoogle() {
         try {
           const { tokens } = await oAuth2Client.getToken(code);
           oAuth2Client.setCredentials(tokens);
-          fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
+          saveGoogleToken(tokens);
           resolve(true);
         } catch (err) {
           console.error('Google auth error', err);
@@ -276,8 +319,8 @@ app.whenReady().then(createWindow);
 ipcMain.handle('connect-google-calendar', authenticateWithGoogle);
 ipcMain.handle('is-google-connected', () => {
   try {
-    const token = fs.readFileSync(TOKEN_PATH, 'utf8');
-    return !!JSON.parse(token).access_token;
+    const tokenData = loadGoogleToken();
+    return !!tokenData?.access_token;
   } catch {
     return false;
   }
