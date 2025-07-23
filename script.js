@@ -107,6 +107,11 @@ class MyRPGLifeApp {
       weeklyReviewBtn.addEventListener('click', () => this.goToWeeklyReview());
     }
 
+    const themeSelect = document.getElementById('themeSelect');
+    if (themeSelect) {
+      themeSelect.addEventListener('change', () => this.changeTheme(themeSelect.value));
+    }
+
     // Modal overlay
     const modalOverlay = document.getElementById('modalOverlay');
     if (modalOverlay) {
@@ -2330,6 +2335,12 @@ class MyRPGLifeApp {
 
       xpFill.style.width = `${percent}%`;
       nextRankXPEl.textContent = next.xp;
+
+      const avatarProgress = document.getElementById('avatarProgress');
+      if (avatarProgress) {
+        const circumference = 283; // 2 * PI * r (r=45)
+        avatarProgress.style.strokeDashoffset = circumference * (1 - percent / 100);
+      }
     }
     
     // Update challenge progress
@@ -2354,6 +2365,11 @@ class MyRPGLifeApp {
 
     this.updateSeasonDisplay();
     this.updateLastSeasonDisplay();
+
+    const chartContainer = document.getElementById('dashboardXPChart');
+    if (chartContainer) {
+      chartContainer.innerHTML = this.renderXPChart(7);
+    }
 
     // Update rank info
     this.updateRankDisplay();

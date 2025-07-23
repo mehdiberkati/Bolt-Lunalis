@@ -77,8 +77,12 @@
         <section id="dashboard" class="content-section active">
           <div class="dashboard-grid">
             <!-- Rang et Avatar -->
-            <div class="rank-card">
+            <div class="rank-card" title="Votre rang actuel">
               <div class="avatar-container">
+                <svg class="avatar-progress" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                  <circle cx="50" cy="50" r="45" class="progress-circle" id="avatarProgress"></circle>
+                </svg>
                 <div class="avatar" id="userAvatar">🎯</div>
                 <div class="rank-badge" id="rankBadge">E</div>
               </div>
@@ -89,7 +93,7 @@
             </div>
 
             <!-- XP et Progression -->
-            <div class="xp-card">
+            <div class="xp-card" title="Progression d'XP">
               <h3>Expérience</h3>
               <div class="xp-display">
                 <span id="currentXP">0</span> /
@@ -103,8 +107,49 @@
               </div>
             </div>
 
+            <!-- Quick Actions -->
+            <details class="daily-actions" open title="Actions rapides" id="quickActionsTop">
+              <summary>Actions Quotidiennes</summary>
+              <div class="action-buttons">
+                <button
+                  class="action-btn"
+                  id="sportBtn"
+                  onclick="app.logSport()"
+                >
+                  <span class="action-icon">💪</span>
+                  Sport (50min)
+                  <span class="action-xp">+3 XP</span>
+                </button>
+                <button
+                  class="action-btn"
+                  id="sleepBtn"
+                  onclick="app.showSleepModal()"
+                >
+                  <span class="action-icon">😴</span>
+                  Sommeil
+                  <span class="action-xp">+1/2 XP</span>
+                </button>
+                <button
+                  class="action-btn distraction"
+                  onclick="app.showDistractionModal()"
+                >
+                  <span class="action-icon">📱</span>
+                  Distractions
+                  <span class="action-xp">-3/-5 XP</span>
+                </button>
+              </div>
+
+              <button
+                class="weekly-review-btn"
+                id="weeklyReviewBtn"
+                onclick="app.goToWeeklyReview()"
+              >
+                📊 Effectuer le Bilan Hebdomadaire
+              </button>
+            </details>
+
             <!-- Saison et Temps -->
-            <div class="season-card">
+            <div class="season-card" title="Saison en cours">
               <h3>Saison <span id="currentSeason">1</span></h3>
               <p>Semaine <span id="currentWeek">1</span></p>
                 <div class="season-progress">
@@ -114,13 +159,13 @@
             </div>
 
             <!-- Saison précédente -->
-            <div class="last-season-card" id="lastSeasonCard" style="display: none">
+            <div class="last-season-card" id="lastSeasonCard" style="display: none" title="Rang de la saison précédente">
               <h3>Rang Saison Précédente</h3>
               <div class="last-season-rank" id="lastSeasonRank">-</div>
             </div>
 
             <!-- Taux d'Intensité -->
-            <div class="intensity-card">
+            <div class="intensity-card" title="Votre intensité moyenne">
               <h3>Taux d'Intensité</h3>
               <div class="intensity-display">
                 <div class="intensity-value" id="intensityValue">0%</div>
@@ -133,8 +178,14 @@
               </div>
             </div>
 
+            <!-- XP Semaine -->
+            <div class="xp-week-card" title="XP des 7 derniers jours">
+              <h3>XP - 7 jours</h3>
+              <div id="dashboardXPChart"></div>
+            </div>
+
             <!-- Défi Journalier -->
-            <div class="daily-challenge">
+            <div class="daily-challenge" title="Complétez le défi pour gagner de l'XP">
               <h3>🎯 Défi Journalier</h3>
               <div class="challenge-content">
                 <div class="challenge-goal">
@@ -157,6 +208,7 @@
               class="double-or-nothing-chest"
               id="doubleOrNothingChest"
               style="display: none"
+              title="Tentez votre chance pour plus d'XP"
             >
               <div class="chest-container">
                 <div class="chest-glow"></div>
@@ -207,50 +259,9 @@
               </div>
             </div>
 
-            <!-- Actions Quotidiennes -->
-            <div class="daily-actions">
-              <h3>Actions Quotidiennes</h3>
-              <div class="action-buttons">
-                <button
-                  class="action-btn"
-                  id="sportBtn"
-                  onclick="app.logSport()"
-                >
-                  <span class="action-icon">💪</span>
-                  Sport (50min)
-                  <span class="action-xp">+3 XP</span>
-                </button>
-                <button
-                  class="action-btn"
-                  id="sleepBtn"
-                  onclick="app.showSleepModal()"
-                >
-                  <span class="action-icon">😴</span>
-                  Sommeil
-                  <span class="action-xp">+1/2 XP</span>
-                </button>
-                <button
-                  class="action-btn distraction"
-                  onclick="app.showDistractionModal()"
-                >
-                  <span class="action-icon">📱</span>
-                  Distractions
-                  <span class="action-xp">-3/-5 XP</span>
-                </button>
-              </div>
-
-              <!-- Bouton Bilan Hebdomadaire -->
-              <button
-                class="weekly-review-btn"
-                id="weeklyReviewBtn"
-                onclick="app.goToWeeklyReview()"
-              >
-                📊 Effectuer le Bilan Hebdomadaire
-              </button>
-            </div>
 
             <!-- Bouton Focus Principal -->
-            <div class="focus-cta">
+            <div class="focus-cta" title="Lancer rapidement une session">
               <button class="focus-start-btn" id="focusStartBtn">
                 <span class="focus-icon">🎯</span>
                 Démarrer une session de focus
@@ -259,7 +270,7 @@
             </div>
 
             <!-- Objectif de Saison -->
-            <div class="season-goal">
+            <div class="season-goal" title="Progrès vers le rang S">
               <h3>Objectif de Saison</h3>
               <div class="goal-content">
                 <p>Atteindre le rang <strong>Sentinelle de l'Ascension (S)</strong></p>
@@ -271,12 +282,23 @@
             </div>
 
             <!-- Streak -->
-            <div class="streak-card">
+            <div class="streak-card" title="Nombre de jours consécutifs à 15+ XP">
               <h3>Streak</h3>
               <div class="streak-display">
                 <span id="streakDays">0</span> jours
               </div>
               <p>Objectif: 15+ XP/jour</p>
+            </div>
+
+            <!-- Sélecteur de Thème -->
+            <div class="theme-toggle-card" title="Changer de thème">
+              <label for="themeSelect">Thème :</label>
+              <select id="themeSelect">
+                <option value="default">Lunalis</option>
+                <option value="fire">Solaris</option>
+                <option value="nature">Verdalis</option>
+                <option value="cosmic">Cosmalis</option>
+              </select>
             </div>
           </div>
         </section>
