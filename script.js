@@ -2304,7 +2304,16 @@ class MyRPGLifeApp {
         reader.onload = (e) => {
           try {
             const importedData = JSON.parse(e.target.result);
+            const requiredFields = ['totalXP', 'projects', 'focusSessions'];
+            const isValid =
+              importedData && requiredFields.every((f) => f in importedData);
+
+            if (!isValid) {
+              throw new Error('Invalid data format');
+            }
+
             this.data = { ...this.data, ...importedData };
+            this.saveData();
             this.updateUI();
             this.showNotification('Données importées avec succès !', 'success');
           } catch (error) {
