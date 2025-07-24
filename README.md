@@ -176,7 +176,7 @@ Le pourcentage du taux d'intensité possède un halo lumineux. Pour réduire ce
 glow, modifiez la constante `INTENSITY_VALUE_GLOW_OPACITY` dans `script.js` :
 
 ```js
-const INTENSITY_VALUE_GLOW_OPACITY = 0.8; // 0.5 pour un halo plus discret
+const INTENSITY_VALUE_GLOW_OPACITY = 0.4; // 0.5 pour un halo plus discret
 ```
 
 ### Créer l'exécutable Windows

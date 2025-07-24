@@ -11,7 +11,7 @@ const INTENSITY_LEVELS = [
     description:
       "Tu n\u2019es pas encore dans le Game. Tu fuis tes missions, tu manques de régularité et d\u2019effort soutenu. Rien n\u2019est encore vraiment enclenché.",
     color: 'linear-gradient(#666,#000)',
-    glow: '#ff6b6b'
+    glow: '#888888'
   },
   {
     min: 40,
@@ -61,7 +61,8 @@ const INTENSITY_LEVELS = [
     role: 'Maître',
     description:
       "Tu exploses tous tes objectifs. Tu es en pleine fusion avec ta mission. Rien ne peut t\u2019arrêter : tu es aligné, focus, inarrêtable.",
-    color: 'linear-gradient(#8a2387,#e94057,#f27121,#fffb00)'
+    color: 'linear-gradient(45deg,#2c1b7e,#601ebd,#007acc,#39b54a)',
+    glow: '#9b5de5'
   }
 ];
 
@@ -93,7 +94,7 @@ function hexToRgba(hex, alpha = 1) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-const INTENSITY_VALUE_GLOW_OPACITY = 0.8;
+const INTENSITY_VALUE_GLOW_OPACITY = 0.4;
 
 class MyRPGLifeApp {
     constructor() {
