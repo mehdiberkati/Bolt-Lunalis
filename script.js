@@ -2187,7 +2187,7 @@ class MyRPGLifeApp {
   showIntensityModal() {
     const levelsHtml = INTENSITY_LEVELS.map(l => {
       const base = extractBaseColor(l.color);
-      const glow = lightenColor(base, 30);
+      const glow = lightenColor(base, 60);
       return `
         <div class="intensity-level" style="--level-color:${base};--level-glow:${glow}">
           <div class="level-icon">${l.emoji}</div>
@@ -2942,25 +2942,40 @@ class MyRPGLifeApp {
     const rate = this.calculateIntensityRate();
     const valueEl = document.getElementById('intensityValue');
     const labelEl = document.getElementById('intensityLabel');
-    const fillEl = document.getElementById('intensityFill');
+    const progressEl = document.getElementById('intensityProgress');
+    const circleEl = document.getElementById('intensityCircle');
 
-    if (!valueEl || !labelEl || !fillEl) return;
+    if (!valueEl || !labelEl || !progressEl) return;
 
     const level = INTENSITY_LEVELS.find(l => rate >= l.min && rate <= l.max) || INTENSITY_LEVELS[0];
     const card = document.getElementById('intensityCard');
 
     valueEl.textContent = `${rate}%`;
     labelEl.textContent = `${level.emoji} ${level.title}`;
-    fillEl.style.width = `${Math.min(rate, 100)}%`;
-    fillEl.style.background = level.color;
-    fillEl.classList.add('bar-shimmer');
+
+    const circumference = 2 * Math.PI * 54;
+    const offset = circumference - (Math.min(rate, 100) / 100) * circumference;
+    progressEl.style.strokeDasharray = circumference;
+    const prev = parseFloat(progressEl.dataset.prevOffset) || circumference;
+    progressEl.dataset.prevOffset = offset;
+    progressEl.animate(
+      [{ strokeDashoffset: prev }, { strokeDashoffset: offset }],
+      { duration: 800, easing: 'ease-out', fill: 'forwards' }
+    );
+    progressEl.style.stroke = level.color;
 
     const base = extractBaseColor(level.color);
-    const light = lightenColor(base, 30);
+    const glow = lightenColor(base, 40);
+    const text = lightenColor(base, 60);
     card.style.setProperty('--intensity-color', base);
-    fillEl.style.boxShadow = `0 0 10px ${light}`;
-    card.style.boxShadow = `0 0 15px ${light}`;
-    valueEl.style.color = base;
+    card.style.setProperty('--intensity-light', glow);
+    progressEl.style.filter = `drop-shadow(0 0 8px ${glow})`;
+    circleEl.style.boxShadow = `0 0 12px ${glow}`;
+    card.style.boxShadow = `0 0 20px ${glow}`;
+    valueEl.style.color = text;
+    valueEl.style.textShadow = `0 0 8px ${glow}`;
+    labelEl.style.color = text;
+    labelEl.style.textShadow = `0 0 8px ${glow}`;
 
     if (rate >= 85) {
       valueEl.classList.add('intensity-glow');

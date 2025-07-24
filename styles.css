@@ -724,62 +724,114 @@ body {
 
 /* Saison et Intensité */
 .season-card h3, .intensity-card h3 {
-  color: var(--secondary-color);
   margin-bottom: 1rem;
   font-size: 1.2rem;
   font-weight: 600;
 }
 
+.season-card h3 {
+  color: var(--secondary-color);
+}
+
+.intensity-card h3 {
+  color: var(--intensity-light, var(--secondary-color));
+}
+
 .intensity-display {
   text-align: center;
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .intensity-value {
   font-size: 2.5rem;
   font-weight: 900;
   font-family: 'Orbitron', monospace;
-  margin-bottom: 0.5rem;
   color: var(--intensity-color, var(--accent-color));
   text-shadow: 0 0 5px var(--intensity-color, var(--accent-color));
 }
 
 .intensity-label {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
+  color: var(--intensity-color, var(--accent-color));
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: 0 0 6px var(--intensity-color, var(--accent-color));
 }
 
-.intensity-bar {
-  width: 100%;
-  height: 10px;
-  background: var(--accent-bg);
-  border-radius: 6px;
+.intensity-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 0.5rem;
+  border-radius: 50%;
   overflow: hidden;
-  position: relative;
 }
 
-.intensity-fill {
+.intensity-circle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--intensity-light, rgba(0,255,150,0.4)) 0%, rgba(0,0,0,0) 70%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.intensity-circle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--intensity-light, rgba(0,255,150,0.7));
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.intensity-svg {
+  width: 100%;
   height: 100%;
-  background: var(--gradient-secondary);
-  border-radius: 6px;
-  transition: width 0.5s ease;
-  width: 0%;
-  position: relative;
-  background-size: 200% auto;
+  transform: rotate(-90deg);
+}
+
+.intensity-bg {
+  fill: none;
+  stroke: var(--accent-bg);
+  stroke-width: 8;
+}
+
+.intensity-progress {
+  fill: none;
+  stroke: var(--intensity-color, var(--accent-color));
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 339.292;
+  stroke-dashoffset: 339.292;
+  transition: stroke-dashoffset 0.5s ease;
+  filter: drop-shadow(0 0 6px var(--intensity-color, var(--accent-color)));
+}
+
+.intensity-circle .intensity-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .bar-shimmer::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmerMove 4s linear infinite;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 60%);
+  animation: shimmerSpin 8s linear infinite;
+  pointer-events: none;
 }
 
-@keyframes shimmerMove {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes shimmerSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes cardShimmerMove {
@@ -3675,7 +3727,18 @@ select:focus {
   border: 1px solid var(--border-color);
   padding: 1rem;
   color: #fff;
-  box-shadow: 0 0 10px var(--level-glow, rgba(255,255,255,0.15));
+  box-shadow: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.intensity-level:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px var(--level-glow, rgba(255,255,255,0.3));
+}
+
+.intensity-level:hover .level-title {
+  color: var(--level-glow, var(--accent-color));
+  text-shadow: 0 0 8px var(--level-glow, rgba(255,255,255,0.6));
 }
 
 .intensity-level::before {
@@ -3705,6 +3768,7 @@ select:focus {
 .level-title {
   font-weight: 700;
   font-size: 1rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 .level-role {
