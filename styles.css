@@ -759,6 +759,27 @@ body {
   height: 120px;
   margin-bottom: 0.5rem;
   border-radius: 50%;
+  overflow: hidden;
+}
+
+.intensity-circle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--intensity-light, rgba(0,255,150,0.4)) 0%, rgba(0,0,0,0) 70%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.intensity-circle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--intensity-light, rgba(0,255,150,0.7));
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .intensity-svg {
@@ -795,15 +816,15 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmerMove 10s linear infinite;
   border-radius: inherit;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 60%);
+  animation: shimmerSpin 8s linear infinite;
+  pointer-events: none;
 }
 
-@keyframes shimmerMove {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes shimmerSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes cardShimmerMove {
@@ -3699,7 +3720,18 @@ select:focus {
   border: 1px solid var(--border-color);
   padding: 1rem;
   color: #fff;
-  box-shadow: 0 0 10px var(--level-glow, rgba(255,255,255,0.15));
+  box-shadow: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.intensity-level:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px var(--level-glow, rgba(255,255,255,0.3));
+}
+
+.intensity-level:hover .level-title {
+  color: var(--level-color, var(--accent-color));
+  text-shadow: 0 0 8px var(--level-glow, rgba(255,255,255,0.6));
 }
 
 .intensity-level::before {
@@ -3729,6 +3761,7 @@ select:focus {
 .level-title {
   font-weight: 700;
   font-size: 1rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 .level-role {

@@ -2943,6 +2943,7 @@ class MyRPGLifeApp {
     const valueEl = document.getElementById('intensityValue');
     const labelEl = document.getElementById('intensityLabel');
     const progressEl = document.getElementById('intensityProgress');
+    const circleEl = document.getElementById('intensityCircle');
 
     if (!valueEl || !labelEl || !progressEl) return;
 
@@ -2955,17 +2956,25 @@ class MyRPGLifeApp {
     const circumference = 2 * Math.PI * 54;
     const offset = circumference - (Math.min(rate, 100) / 100) * circumference;
     progressEl.style.strokeDasharray = circumference;
-    progressEl.style.strokeDashoffset = offset;
+    const prev = parseFloat(progressEl.dataset.prevOffset) || circumference;
+    progressEl.dataset.prevOffset = offset;
+    progressEl.animate(
+      [{ strokeDashoffset: prev }, { strokeDashoffset: offset }],
+      { duration: 800, easing: 'ease-out', fill: 'forwards' }
+    );
     progressEl.style.stroke = level.color;
 
     const base = extractBaseColor(level.color);
-    const light = lightenColor(base, 30);
+    const light = lightenColor(base, 40);
     card.style.setProperty('--intensity-color', base);
-    progressEl.style.filter = `drop-shadow(0 0 6px ${light})`;
-    card.style.boxShadow = `0 0 15px ${light}`;
+    card.style.setProperty('--intensity-light', light);
+    progressEl.style.filter = `drop-shadow(0 0 8px ${light})`;
+    circleEl.style.boxShadow = `0 0 12px ${light}`;
+    card.style.boxShadow = `0 0 20px ${light}`;
     valueEl.style.color = base;
+    valueEl.style.textShadow = `0 0 8px ${light}`;
     labelEl.style.color = base;
-    labelEl.style.textShadow = `0 0 6px ${light}`;
+    labelEl.style.textShadow = `0 0 8px ${light}`;
 
     if (rate >= 85) {
       valueEl.classList.add('intensity-glow');
