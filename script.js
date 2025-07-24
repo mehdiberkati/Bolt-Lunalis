@@ -10,7 +10,8 @@ const INTENSITY_LEVELS = [
     role: 'Déserteur',
     description:
       "Tu n\u2019es pas encore dans le Game. Tu fuis tes missions, tu manques de régularité et d\u2019effort soutenu. Rien n\u2019est encore vraiment enclenché.",
-    color: 'linear-gradient(#666,#000)'
+    color: 'linear-gradient(#666,#000)',
+    glow: '#ff6b6b'
   },
   {
     min: 40,
@@ -83,6 +84,16 @@ function lightenColor(hex, percent) {
     '#' + ((1 << 24) + (clamp(r) << 16) + (clamp(g) << 8) + clamp(b)).toString(16).slice(1)
   );
 }
+
+function hexToRgba(hex, alpha = 1) {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+const INTENSITY_VALUE_GLOW_OPACITY = 0.8;
 
 class MyRPGLifeApp {
     constructor() {
@@ -2187,7 +2198,7 @@ class MyRPGLifeApp {
   showIntensityModal() {
     const levelsHtml = INTENSITY_LEVELS.map(l => {
       const base = extractBaseColor(l.color);
-      const glow = lightenColor(base, 60);
+      const glow = l.glow || lightenColor(base, 60);
       return `
         <div class="intensity-level" style="--level-color:${base};--level-glow:${glow}">
           <div class="level-icon">${l.emoji}</div>
@@ -2953,7 +2964,8 @@ class MyRPGLifeApp {
     valueEl.textContent = `${rate}%`;
     labelEl.textContent = `${level.emoji} ${level.title}`;
 
-    const circumference = 2 * Math.PI * 65;
+    const radius = 75;
+    const circumference = 2 * Math.PI * radius;
     const offset = circumference - (Math.min(rate, 100) / 100) * circumference;
     progressEl.style.strokeDasharray = circumference;
     const prev = parseFloat(progressEl.dataset.prevOffset) || circumference;
@@ -2973,7 +2985,7 @@ class MyRPGLifeApp {
     circleEl.style.boxShadow = `0 0 12px ${glow}`;
     card.style.boxShadow = `0 0 20px ${glow}`;
     valueEl.style.color = text;
-    valueEl.style.textShadow = `0 0 8px ${glow}`;
+    valueEl.style.textShadow = `0 0 8px ${hexToRgba(glow, INTENSITY_VALUE_GLOW_OPACITY)}`;
     labelEl.style.color = text;
 
     if (rate >= 85) {
