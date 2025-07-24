@@ -724,10 +724,17 @@ body {
 
 /* Saison et Intensité */
 .season-card h3, .intensity-card h3 {
-  color: var(--secondary-color);
   margin-bottom: 1rem;
   font-size: 1.2rem;
   font-weight: 600;
+}
+
+.season-card h3 {
+  color: var(--secondary-color);
+}
+
+.intensity-card h3 {
+  color: var(--intensity-light, var(--secondary-color));
 }
 
 .intensity-display {
@@ -3730,7 +3737,7 @@ select:focus {
 }
 
 .intensity-level:hover .level-title {
-  color: var(--level-color, var(--accent-color));
+  color: var(--level-glow, var(--accent-color));
   text-shadow: 0 0 8px var(--level-glow, rgba(255,255,255,0.6));
 }
 

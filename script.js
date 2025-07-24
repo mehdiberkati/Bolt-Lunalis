@@ -2187,7 +2187,7 @@ class MyRPGLifeApp {
   showIntensityModal() {
     const levelsHtml = INTENSITY_LEVELS.map(l => {
       const base = extractBaseColor(l.color);
-      const glow = lightenColor(base, 30);
+      const glow = lightenColor(base, 60);
       return `
         <div class="intensity-level" style="--level-color:${base};--level-glow:${glow}">
           <div class="level-icon">${l.emoji}</div>
@@ -2965,16 +2965,17 @@ class MyRPGLifeApp {
     progressEl.style.stroke = level.color;
 
     const base = extractBaseColor(level.color);
-    const light = lightenColor(base, 40);
+    const glow = lightenColor(base, 40);
+    const text = lightenColor(base, 60);
     card.style.setProperty('--intensity-color', base);
-    card.style.setProperty('--intensity-light', light);
-    progressEl.style.filter = `drop-shadow(0 0 8px ${light})`;
-    circleEl.style.boxShadow = `0 0 12px ${light}`;
-    card.style.boxShadow = `0 0 20px ${light}`;
-    valueEl.style.color = base;
-    valueEl.style.textShadow = `0 0 8px ${light}`;
-    labelEl.style.color = base;
-    labelEl.style.textShadow = `0 0 8px ${light}`;
+    card.style.setProperty('--intensity-light', glow);
+    progressEl.style.filter = `drop-shadow(0 0 8px ${glow})`;
+    circleEl.style.boxShadow = `0 0 12px ${glow}`;
+    card.style.boxShadow = `0 0 20px ${glow}`;
+    valueEl.style.color = text;
+    valueEl.style.textShadow = `0 0 8px ${glow}`;
+    labelEl.style.color = text;
+    labelEl.style.textShadow = `0 0 8px ${glow}`;
 
     if (rate >= 85) {
       valueEl.classList.add('intensity-glow');
