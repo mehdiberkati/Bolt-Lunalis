@@ -2964,6 +2964,8 @@ class MyRPGLifeApp {
     progressEl.style.filter = `drop-shadow(0 0 6px ${light})`;
     card.style.boxShadow = `0 0 15px ${light}`;
     valueEl.style.color = base;
+    labelEl.style.color = base;
+    labelEl.style.textShadow = `0 0 6px ${light}`;
 
     if (rate >= 85) {
       valueEl.classList.add('intensity-glow');
