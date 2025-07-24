@@ -2942,23 +2942,26 @@ class MyRPGLifeApp {
     const rate = this.calculateIntensityRate();
     const valueEl = document.getElementById('intensityValue');
     const labelEl = document.getElementById('intensityLabel');
-    const fillEl = document.getElementById('intensityFill');
+    const progressEl = document.getElementById('intensityProgress');
 
-    if (!valueEl || !labelEl || !fillEl) return;
+    if (!valueEl || !labelEl || !progressEl) return;
 
     const level = INTENSITY_LEVELS.find(l => rate >= l.min && rate <= l.max) || INTENSITY_LEVELS[0];
     const card = document.getElementById('intensityCard');
 
     valueEl.textContent = `${rate}%`;
     labelEl.textContent = `${level.emoji} ${level.title}`;
-    fillEl.style.width = `${Math.min(rate, 100)}%`;
-    fillEl.style.background = level.color;
-    fillEl.classList.add('bar-shimmer');
+
+    const circumference = 2 * Math.PI * 54;
+    const offset = circumference - (Math.min(rate, 100) / 100) * circumference;
+    progressEl.style.strokeDasharray = circumference;
+    progressEl.style.strokeDashoffset = offset;
+    progressEl.style.stroke = level.color;
 
     const base = extractBaseColor(level.color);
     const light = lightenColor(base, 30);
     card.style.setProperty('--intensity-color', base);
-    fillEl.style.boxShadow = `0 0 10px ${light}`;
+    progressEl.style.filter = `drop-shadow(0 0 6px ${light})`;
     card.style.boxShadow = `0 0 15px ${light}`;
     valueEl.style.color = base;
 

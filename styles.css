@@ -733,13 +733,15 @@ body {
 .intensity-display {
   text-align: center;
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .intensity-value {
   font-size: 2.5rem;
   font-weight: 900;
   font-family: 'Orbitron', monospace;
-  margin-bottom: 0.5rem;
   color: var(--intensity-color, var(--accent-color));
   text-shadow: 0 0 5px var(--intensity-color, var(--accent-color));
 }
@@ -749,32 +751,51 @@ body {
   font-size: 0.95rem;
 }
 
-.intensity-bar {
-  width: 100%;
-  height: 10px;
-  background: var(--accent-bg);
-  border-radius: 6px;
-  overflow: hidden;
+.intensity-circle {
   position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 0.5rem;
 }
 
-.intensity-fill {
+.intensity-svg {
+  width: 100%;
   height: 100%;
-  background: var(--gradient-secondary);
-  border-radius: 6px;
-  transition: width 0.5s ease;
-  width: 0%;
-  position: relative;
-  background-size: 200% auto;
+  transform: rotate(-90deg);
+}
+
+.intensity-bg {
+  fill: none;
+  stroke: var(--accent-bg);
+  stroke-width: 8;
+}
+
+.intensity-progress {
+  fill: none;
+  stroke: var(--intensity-color, var(--accent-color));
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 339.292;
+  stroke-dashoffset: 339.292;
+  transition: stroke-dashoffset 0.5s ease;
+  filter: drop-shadow(0 0 6px var(--intensity-color, var(--accent-color)));
+}
+
+.intensity-circle .intensity-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .bar-shimmer::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
   background-size: 200% 100%;
-  animation: shimmerMove 4s linear infinite;
+  animation: shimmerMove 8s linear infinite;
+  border-radius: inherit;
 }
 
 @keyframes shimmerMove {
