@@ -158,17 +158,26 @@ Application immersive de gamification pour booster la productivité et la discip
 1. Placez votre icône (format `.png`) dans `assets/icon.png`.
 2. Dans `main.js`, ajoutez ou modifiez l'option `icon` lors de la création de `BrowserWindow` :
    ```js
-   const win = new BrowserWindow({
-     width: 1200,
-     height: 800,
-     icon: path.join(__dirname, 'assets', 'icon.png'),
-     webPreferences: {
-       preload: path.join(__dirname, 'preload.js'),
-       contextIsolation: true,
-       nodeIntegration: false,
-     },
-   });
-   ```
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    icon: path.join(__dirname, 'assets', 'icon.png'),
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  });
+  ```
+
+### Ajuster l'opacité du halo d'intensité
+
+Le pourcentage du taux d'intensité possède un halo lumineux. Pour réduire ce
+glow, modifiez la constante `INTENSITY_VALUE_GLOW_OPACITY` dans `script.js` :
+
+```js
+const INTENSITY_VALUE_GLOW_OPACITY = 0.4; // 0.5 pour un halo plus discret
+```
 
 ### Créer l'exécutable Windows
 

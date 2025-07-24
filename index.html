@@ -123,13 +123,22 @@
             <div class="intensity-card" id="intensityCard">
               <h3>Taux d'Intensité</h3>
               <div class="intensity-display">
-                <div class="intensity-value" id="intensityValue">0%</div>
+                <div class="intensity-circle bar-shimmer" id="intensityCircle">
+                  <svg class="intensity-svg" viewBox="0 0 170 170">
+                    <circle cx="85" cy="85" r="75" class="intensity-bg"></circle>
+                    <circle
+                      cx="85"
+                      cy="85"
+                      r="75"
+                      class="intensity-progress"
+                      id="intensityProgress"
+                    ></circle>
+                  </svg>
+                  <div class="intensity-value" id="intensityValue">0%</div>
+                </div>
                 <div class="intensity-label" id="intensityLabel">
                   👤 Errant du Néant
                 </div>
-              </div>
-              <div class="intensity-bar">
-                <div class="intensity-fill" id="intensityFill"></div>
               </div>
             </div>
 

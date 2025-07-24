@@ -10,7 +10,8 @@ const INTENSITY_LEVELS = [
     role: 'Déserteur',
     description:
       "Tu n\u2019es pas encore dans le Game. Tu fuis tes missions, tu manques de régularité et d\u2019effort soutenu. Rien n\u2019est encore vraiment enclenché.",
-    color: 'linear-gradient(#666,#000)'
+    color: 'linear-gradient(#666,#000)',
+    glow: '#888888'
   },
   {
     min: 40,
@@ -60,7 +61,8 @@ const INTENSITY_LEVELS = [
     role: 'Maître',
     description:
       "Tu exploses tous tes objectifs. Tu es en pleine fusion avec ta mission. Rien ne peut t\u2019arrêter : tu es aligné, focus, inarrêtable.",
-    color: 'linear-gradient(#8a2387,#e94057,#f27121,#fffb00)'
+    color: 'linear-gradient(45deg,#2c1b7e,#601ebd,#007acc,#39b54a)',
+    glow: '#9b5de5'
   }
 ];
 
@@ -83,6 +85,16 @@ function lightenColor(hex, percent) {
     '#' + ((1 << 24) + (clamp(r) << 16) + (clamp(g) << 8) + clamp(b)).toString(16).slice(1)
   );
 }
+
+function hexToRgba(hex, alpha = 1) {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+const INTENSITY_VALUE_GLOW_OPACITY = 0.4;
 
 class MyRPGLifeApp {
     constructor() {
@@ -2187,7 +2199,7 @@ class MyRPGLifeApp {
   showIntensityModal() {
     const levelsHtml = INTENSITY_LEVELS.map(l => {
       const base = extractBaseColor(l.color);
-      const glow = lightenColor(base, 30);
+      const glow = l.glow || lightenColor(base, 60);
       return `
         <div class="intensity-level" style="--level-color:${base};--level-glow:${glow}">
           <div class="level-icon">${l.emoji}</div>
@@ -2942,25 +2954,40 @@ class MyRPGLifeApp {
     const rate = this.calculateIntensityRate();
     const valueEl = document.getElementById('intensityValue');
     const labelEl = document.getElementById('intensityLabel');
-    const fillEl = document.getElementById('intensityFill');
+    const progressEl = document.getElementById('intensityProgress');
+    const circleEl = document.getElementById('intensityCircle');
 
-    if (!valueEl || !labelEl || !fillEl) return;
+    if (!valueEl || !labelEl || !progressEl) return;
 
     const level = INTENSITY_LEVELS.find(l => rate >= l.min && rate <= l.max) || INTENSITY_LEVELS[0];
     const card = document.getElementById('intensityCard');
 
     valueEl.textContent = `${rate}%`;
     labelEl.textContent = `${level.emoji} ${level.title}`;
-    fillEl.style.width = `${Math.min(rate, 100)}%`;
-    fillEl.style.background = level.color;
-    fillEl.classList.add('bar-shimmer');
+
+    const radius = 75;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (Math.min(rate, 100) / 100) * circumference;
+    progressEl.style.strokeDasharray = circumference;
+    const prev = parseFloat(progressEl.dataset.prevOffset) || circumference;
+    progressEl.dataset.prevOffset = offset;
+    progressEl.animate(
+      [{ strokeDashoffset: prev }, { strokeDashoffset: offset }],
+      { duration: 800, easing: 'ease-out', fill: 'forwards' }
+    );
+    progressEl.style.stroke = level.color;
 
     const base = extractBaseColor(level.color);
-    const light = lightenColor(base, 30);
+    const glow = lightenColor(base, 40);
+    const text = lightenColor(base, 60);
     card.style.setProperty('--intensity-color', base);
-    fillEl.style.boxShadow = `0 0 10px ${light}`;
-    card.style.boxShadow = `0 0 15px ${light}`;
-    valueEl.style.color = base;
+    card.style.setProperty('--intensity-light', glow);
+    progressEl.style.filter = `drop-shadow(0 0 8px ${glow})`;
+    circleEl.style.boxShadow = `0 0 12px ${glow}`;
+    card.style.boxShadow = `0 0 20px ${glow}`;
+    valueEl.style.color = text;
+    valueEl.style.textShadow = `0 0 8px ${hexToRgba(glow, INTENSITY_VALUE_GLOW_OPACITY)}`;
+    labelEl.style.color = text;
 
     if (rate >= 85) {
       valueEl.classList.add('intensity-glow');
